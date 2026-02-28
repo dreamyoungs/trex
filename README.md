@@ -1,6 +1,6 @@
 # TREX
 
-🌍 [日本語](docs/README.ja.md) | [Español](docs/README.es.md)
+🌍 [한국어](#-한국어) | [日本語](docs/README.ja.md) | [Español](docs/README.es.md)
 
 **Table Rust EXtractor** — A lightweight Rust engine that extracts tables from PDFs.
 
