@@ -87,10 +87,23 @@ curl -X POST http://localhost:8080/extract \
 
 ### Node.js
 
-```javascript
-const { extract } = require("@dreamyoungs/trex");
+Hay dos paquetes disponibles — elige el que mejor se adapte a tu caso:
 
-const tables = await extract("invoice.pdf", { pages: [1, 2] });
+| Paquete                  | Instalación                    | Método                                             |
+| ------------------------ | ------------------------------ | -------------------------------------------------- |
+| `@dreamyoungs/trex`      | `npm i @dreamyoungs/trex`      | CLI wrapper — descarga automática del binario TREX |
+| `@dreamyoungs/trex-node` | `npm i @dreamyoungs/trex-node` | Binding nativo NAPI-RS — sin subproceso            |
+
+```javascript
+// Ambos paquetes comparten la misma API
+const { extract } = require("@dreamyoungs/trex"); // CLI wrapper
+// const { extract } = require("@dreamyoungs/trex-node"); // o binding nativo
+
+const tables = await extract("invoice.pdf", {
+    pages: [1, 2],
+    mode: "auto"
+});
+
 console.log(tables[0].rows);
 ```
 

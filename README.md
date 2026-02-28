@@ -10,12 +10,17 @@
 
 ### Node.js
 
-```bash
-npm install @dreamyoungs/trex
-```
+Two packages are available — choose the one that fits your use case:
+
+| Package                  | Install                        | How it works                             |
+| ------------------------ | ------------------------------ | ---------------------------------------- |
+| `@dreamyoungs/trex`      | `npm i @dreamyoungs/trex`      | CLI wrapper — auto-downloads TREX binary |
+| `@dreamyoungs/trex-node` | `npm i @dreamyoungs/trex-node` | Native NAPI-RS binding — no subprocess   |
 
 ```javascript
-const { extract } = require("@dreamyoungs/trex");
+// Both packages share the same API
+const { extract } = require("@dreamyoungs/trex"); // CLI wrapper
+// const { extract } = require("@dreamyoungs/trex-node"); // or native binding
 
 const tables = await extract("invoice.pdf", {
     pages: [1, 2],
@@ -138,10 +143,16 @@ Language output follows system locale (`LC_ALL`, `LANG`). Override with `TREX_LA
 
 ### Node.js
 
-The npm package (`@dreamyoungs/trex`) is a CLI wrapper that auto-downloads platform binaries from GitHub Releases.
+#### `@dreamyoungs/trex` — CLI wrapper (recommended)
+
+```bash
+npm install @dreamyoungs/trex
+```
+
+Auto-downloads a platform TREX binary on install. If download fails, set `TREX_BIN` or pass `binPath`.
 
 ```javascript
-const { extract } = require("@dreamyoungs/trex");
+const { extract, extractCsv, extractFromBuffer } = require("@dreamyoungs/trex");
 
 const tables = await extract("invoice.pdf", {
     pages: [1, 2],
@@ -150,12 +161,17 @@ const tables = await extract("invoice.pdf", {
 });
 ```
 
-If auto-download is unavailable, set `TREX_BIN` or pass `binPath`.
-
-For native Node.js bindings via NAPI-RS:
+#### `@dreamyoungs/trex-node` — Native binding (faster)
 
 ```bash
-cd bindings/node && npm install && npm run build
+npm install @dreamyoungs/trex-node
+```
+
+NAPI-RS native binding — calls Rust directly with no subprocess overhead. Same API as the CLI wrapper.
+
+```javascript
+const { extract } = require("@dreamyoungs/trex-node");
+const tables = extract("invoice.pdf", { mode: "Auto" }); // synchronous
 ```
 
 ### Python
@@ -229,12 +245,17 @@ MIT OR Apache-2.0
 
 ### Node.js
 
-```bash
-npm install @dreamyoungs/trex
-```
+두 가지 패키지가 있습니다 — 용도에 맞게 선택하세요:
+
+| 패키지                   | 설치                           | 방식                                        |
+| ------------------------ | ------------------------------ | ------------------------------------------- |
+| `@dreamyoungs/trex`      | `npm i @dreamyoungs/trex`      | CLI 래퍼 — TREX 바이너리 자동 다운로드      |
+| `@dreamyoungs/trex-node` | `npm i @dreamyoungs/trex-node` | NAPI-RS 네이티브 바인딩 — 서브프로세스 없음 |
 
 ```javascript
-const { extract } = require("@dreamyoungs/trex");
+// 두 패키지 모두 동일한 API
+const { extract } = require("@dreamyoungs/trex"); // CLI 래퍼
+// const { extract } = require("@dreamyoungs/trex-node"); // 또는 네이티브 바인딩
 
 const tables = await extract("invoice.pdf", {
     pages: [1, 2],
@@ -357,10 +378,16 @@ Options:
 
 ### Node.js
 
-npm 패키지(`@dreamyoungs/trex`)는 GitHub Releases에서 플랫폼 바이너리를 자동 다운로드하는 CLI 래퍼입니다.
+#### `@dreamyoungs/trex` — CLI 래퍼 (권장)
+
+```bash
+npm install @dreamyoungs/trex
+```
+
+설치 시 플랫폼 TREX 바이너리를 자동 다운로드. 실패 시 `TREX_BIN` 또는 `binPath`로 지정.
 
 ```javascript
-const { extract } = require("@dreamyoungs/trex");
+const { extract, extractCsv, extractFromBuffer } = require("@dreamyoungs/trex");
 
 const tables = await extract("invoice.pdf", {
     pages: [1, 2],
@@ -369,12 +396,17 @@ const tables = await extract("invoice.pdf", {
 });
 ```
 
-자동 다운로드 불가 시 `TREX_BIN` 또는 `binPath`로 지정.
-
-네이티브 Node.js 바인딩(NAPI-RS):
+#### `@dreamyoungs/trex-node` — 네이티브 바인딩 (고속)
 
 ```bash
-cd bindings/node && npm install && npm run build
+npm install @dreamyoungs/trex-node
+```
+
+NAPI-RS 네이티브 바인딩 — Rust를 직접 호출하여 서브프로세스 오버헤드 없음. CLI 래퍼와 동일한 API.
+
+```javascript
+const { extract } = require("@dreamyoungs/trex-node");
+const tables = extract("invoice.pdf", { mode: "Auto" }); // 동기 호출
 ```
 
 ### Python

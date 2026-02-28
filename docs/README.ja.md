@@ -87,10 +87,23 @@ curl -X POST http://localhost:8080/extract \
 
 ### Node.js
 
-```javascript
-const { extract } = require("@dreamyoungs/trex");
+2つのパッケージから選択できます:
 
-const tables = await extract("invoice.pdf", { pages: [1, 2] });
+| パッケージ               | インストール                   | 方式                                               |
+| ------------------------ | ------------------------------ | -------------------------------------------------- |
+| `@dreamyoungs/trex`      | `npm i @dreamyoungs/trex`      | CLIラッパー — TREXバイナリ自動ダウンロード         |
+| `@dreamyoungs/trex-node` | `npm i @dreamyoungs/trex-node` | NAPI-RSネイティブバインディング — サブプロセスなし |
+
+```javascript
+// 両パッケージとも同じAPI
+const { extract } = require("@dreamyoungs/trex"); // CLIラッパー
+// const { extract } = require("@dreamyoungs/trex-node"); // またはネイティブ
+
+const tables = await extract("invoice.pdf", {
+    pages: [1, 2],
+    mode: "auto"
+});
+
 console.log(tables[0].rows);
 ```
 
