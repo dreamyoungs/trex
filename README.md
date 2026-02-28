@@ -1,123 +1,12 @@
-# TREX
+# 🦖 TREX
 
 🌍 [한국어](#-한국어) | [日本語](docs/README.ja.md) | [Español](docs/README.es.md)
 
-**Table Rust EXtractor** — A lightweight Rust engine that extracts tables from PDFs.
+**Table Rust EXtractor** — Extract tables from PDFs with zero native dependencies. Built in Rust, usable from Node.js and Python.
 
-```bash
-trex extract invoice.pdf --format json
-```
+[![MIT/Apache-2.0](https://img.shields.io/badge/license-MIT%2FApache--2.0-blue)](LICENSE-MIT)
 
-```json
-[
-    {
-        "page": 1,
-        "table_index": 0,
-        "headers": ["Item", "Qty", "Unit Price", "Amount"],
-        "rows": [
-            ["A4 Paper", "10", "5,000", "50,000"],
-            ["Toner", "2", "35,000", "70,000"]
-        ]
-    }
-]
-```
-
----
-
-## Why TREX?
-
-Existing PDF table extraction tools are concentrated in the Python ecosystem.
-They require heavy runtime dependencies like OpenCV, Ghostscript, Pandas, and Java, making large-scale processing difficult in serverless environments due to memory constraints.
-
-TREX is a lightweight alternative that runs as a single binary with no external dependencies.
-
-- **Zero external dependencies**: No need for native libraries like OpenCV or Ghostscript
-- **Low memory footprint**: Runs without OOM in serverless containers (Cloud Run, Lambda)
-- **Single binary deployment**: Minimizes container image size
-
----
-
-## Parsing Engine
-
-TREX detects tables using two modes:
-
-**Lattice** — Handles tables with visible gridlines. Detects horizontal and vertical line segments using a lightweight CV algorithm and determines cell regions from intersections. Works without OpenCV.
-
-**Stream** — Handles tables without gridlines. Analyzes text box coordinates using clustering algorithms to infer columns and rows.
-
-**DL Router (optional)** — Uses a lightweight page-feature model to route each page to Lattice / Stream / Blend strategy. Build with `--features dl` and provide an ONNX model path.
-
-```mermaid
-graph LR
-    A[PDF] --> B{Lines present?}
-    B -->|Yes| C[Lattice]
-    B -->|No| D[Stream]
-    C --> E[Cell Merge]
-    D --> E
-    E --> F[JSON Output]
-```
-
----
-
-## Usage
-
-### CLI
-
-```bash
-# Single file
-trex extract report.pdf
-
-# Specific pages only
-trex extract report.pdf --pages 3,5,7
-
-# Specify parsing mode
-trex extract report.pdf --mode lattice
-
-# DL router mode (optional)
-cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router.onnx
-
-# Output format
-trex extract report.pdf --format csv > output.csv
-
-# Emit extraction event log for feedback loop
-trex extract report.pdf \
-  --event-log logs/extraction_events.ndjson \
-  --event-document-key "doc-123" \
-  --event-tenant-id "tenant-a" \
-  --event-training-opt-in
-```
-
-Language output is selected from system locale (`LC_ALL`, `LC_MESSAGES`, `LANG`).
-Use `TREX_LANG=ko` or `TREX_LANG=en` to override explicitly.
-
-### Feedback Loop (Model Updates)
-
-If you run TREX in a production chatbot/doc-processing service, collect failure events and retrain router models in batch:
-
-```bash
-python3 ml/update_router.py \
-  --events logs/extraction_events.ndjson \
-  --work-dir ml/artifacts/update
-```
-
-TREX does not include a built-in always-on server. Run this manually or via your own scheduler (for example, GitHub Actions schedule).
-
-See `ml/README.md` for the full pipeline.
-For custom model compatibility, see `ml/MODEL_CONTRACT.md`.
-
-### Docker (REST API)
-
-```bash
-docker build -t trex .
-docker run --rm -p 8080:8080 trex
-
-curl -X POST http://localhost:8080/extract \
-  -F "file=@invoice.pdf" \
-  -F "mode=auto" \
-  -F "format=json"
-```
-
-Per-request language can be controlled with `Accept-Language` (e.g. `en-US`, `ko-KR`).
+## Quick Start
 
 ### Node.js
 
@@ -129,26 +18,144 @@ npm install @dreamyoungs/trex
 const { extract } = require("@dreamyoungs/trex");
 
 const tables = await extract("invoice.pdf", {
-  pages: [1, 2],
-  mode: "auto",
-  // optional: override CLI path
-  // binPath: "/usr/local/bin/trex",
+    pages: [1, 2],
+    mode: "auto"
 });
 
-console.log(tables[0].rows);
+console.log(tables[0].headers); // ["Item", "Qty", "Unit Price", "Amount"]
+console.log(tables[0].rows); // [["A4 Paper", "10", "5,000", "50,000"], ...]
 ```
 
-The npm package is a CLI wrapper.
-On install, it tries to download a matching TREX binary from GitHub Releases.
-If auto-download is unavailable, set `TREX_BIN` (or `binPath`) to a local TREX binary.
-Maintainers can publish release assets with `scripts/release/publish_assets.sh`.
-
-For native Node.js bindings (NAPI-RS), see `bindings/node`:
+### CLI
 
 ```bash
-cd bindings/node
-npm install
-npm run build
+trex extract invoice.pdf --format json
+trex extract invoice.pdf --format csv > output.csv
+trex extract invoice.pdf --pages 3,5,7 --mode lattice
+```
+
+### Docker
+
+```bash
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
+
+curl -X POST http://localhost:8080/extract \
+  -F "file=@invoice.pdf" \
+  -F "mode=auto" \
+  -F "format=json"
+```
+
+---
+
+## Why TREX?
+
+PDF table extraction has long been dominated by the Python ecosystem — tools like Camelot, Tabula, and pdfplumber all require heavy runtimes (OpenCV, Ghostscript, Java) and struggle with memory limits in serverless environments.
+
+TREX takes a different approach:
+
+|                      | Python tools                  | TREX                            |
+| -------------------- | ----------------------------- | ------------------------------- |
+| **Runtime**          | Python + OpenCV + Ghostscript | Single Rust binary              |
+| **Memory**           | 200–500 MB+                   | ~30 MB                          |
+| **Container size**   | 500 MB+                       | ~15 MB                          |
+| **Language support** | Python only                   | Rust, Node.js, Python, Docker   |
+| **Improvement loop** | Manual                        | DL Router + ML training scripts |
+
+### Key Advantages
+
+- **🚀 Lightweight & Fast** — Single binary, no native dependencies. Runs instantly in serverless containers (Cloud Run, Lambda) without OOM issues.
+- **🧠 Improvable with DL** — An optional DL Router can be retrained on extraction failures to improve table detection accuracy. You run the training pipeline manually or via your own scheduler (e.g. GitHub Actions cron).
+- **🌍 Multi-Runtime** — Use TREX from Node.js (`npm install`), Python (`pip install`), Docker REST API, or the CLI. The same Rust core powers all of them.
+- **🔧 Production-Ready Telemetry** — Built-in event logging (`--event-log`) captures extraction metrics for production monitoring. Collected events can be fed into the ML training pipeline to retrain the router model.
+
+---
+
+## Parsing Engine
+
+TREX detects tables using three strategies:
+
+**Lattice** — For tables with visible gridlines. Detects line segments and computes cell regions from intersections. No OpenCV required.
+
+**Stream** — For tables without gridlines. Clusters text box coordinates to infer columns and rows.
+
+**DL Router** _(optional)_ — A lightweight ONNX model analyzes page features and routes each page to the optimal strategy (Lattice / Stream / Blend). When no model is provided, a built-in heuristic router is used instead.
+
+```mermaid
+graph LR
+    A[PDF] --> B{DL Router}
+    B -->|gridlines| C[Lattice]
+    B -->|no lines| D[Stream]
+    B -->|mixed| G[Blend]
+    C --> E[Cell Merge]
+    D --> E
+    G --> E
+    E --> F[JSON / CSV]
+```
+
+### Feedback Loop
+
+Collect extraction events in production and retrain the router model in batch:
+
+```bash
+# 1. Run TREX with event logging enabled
+trex extract report.pdf \
+  --event-log logs/extraction_events.ndjson \
+  --event-document-key "doc-123" \
+  --event-training-opt-in
+
+# 2. Retrain the router model
+python3 ml/update_router.py \
+  --events logs/extraction_events.ndjson \
+  --work-dir ml/artifacts/update
+```
+
+This is not an always-on server — run it manually or via a scheduler (e.g. GitHub Actions cron).
+See [`ml/README.md`](ml/README.md) for the full pipeline and [`ml/MODEL_CONTRACT.md`](ml/MODEL_CONTRACT.md) for model I/O specs.
+
+---
+
+## Usage Details
+
+### CLI Options
+
+```bash
+trex extract <file.pdf> [OPTIONS]
+
+Options:
+  --pages <1,3,5 | 1-10>     Pages to process
+  --mode <auto|lattice|stream|dl>  Parsing mode (default: auto)
+  --format <json|csv>         Output format (default: json)
+  --dl-model <path.onnx>      DL router model path (requires --features dl)
+  --dl-min-confidence <0.55>  Min confidence for DL routing
+  --event-log <path.ndjson>   Write extraction events for feedback loop
+  --event-document-key <key>  Document identifier for events
+  --event-tenant-id <id>      Tenant identifier
+  --event-training-opt-in     Allow this data for model training
+```
+
+Language output follows system locale (`LC_ALL`, `LANG`). Override with `TREX_LANG=ko` or `TREX_LANG=en`.
+
+### Node.js
+
+The npm package (`@dreamyoungs/trex`) is a CLI wrapper that auto-downloads platform binaries from GitHub Releases.
+
+```javascript
+const { extract } = require("@dreamyoungs/trex");
+
+const tables = await extract("invoice.pdf", {
+    pages: [1, 2],
+    mode: "auto"
+    // binPath: "/usr/local/bin/trex",  // optional: override binary path
+});
+```
+
+If auto-download is unavailable, set `TREX_BIN` or pass `binPath`.
+
+For native Node.js bindings via NAPI-RS:
+
+```bash
+cd bindings/node && npm install && npm run build
 ```
 
 ### Python
@@ -160,40 +167,47 @@ tables = trex.extract("invoice.pdf", pages=[1, 2])
 print(tables[0].rows)
 ```
 
+### Docker REST API
+
+```bash
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
+```
+
+Per-request language: `Accept-Language: ko-KR` header.
+
 ---
 
 ## Design Principles
 
 TREX **does one thing**: converts the physical table layout on a page into a 2D array.
 
-Things it intentionally does NOT do:
-
-- LLM-based document analysis or contextual interpretation
-- Automatic merging of tables spanning multiple pages
-- Header normalization, data type inference, or other business logic
-
-Such post-processing should be handled by the application layer consuming TREX's output.
+Things it intentionally does **not** do: LLM-based analysis, cross-page table merging, header normalization, or data type inference. These belong in the application layer consuming TREX's output.
 
 ---
 
 ## Tech Stack
 
-| Area             | Choice                  | Note                  |
-| ---------------- | ----------------------- | --------------------- |
-| Language         | Rust                    |                       |
-| PDF Parser       | `lopdf` / `pdf-extract` | Low-level PDF access  |
-| HTTP Server      | Axum                    | For Docker REST API   |
-| Python Bindings  | PyO3 + maturin          | `pip install` support |
-| Node.js          | CLI wrapper + NAPI-RS   | `npm/trex`, `bindings/node` |
+| Area            | Choice                  | Note                        |
+| --------------- | ----------------------- | --------------------------- |
+| Language        | Rust                    | Core engine                 |
+| PDF Parser      | `lopdf` / `pdf-extract` | Low-level PDF access        |
+| DL Runtime      | `tract-onnx` (optional) | ONNX model inference        |
+| HTTP Server     | Axum                    | Docker REST API             |
+| Node.js         | CLI wrapper + NAPI-RS   | `npm/trex`, `bindings/node` |
+| Python Bindings | PyO3 + maturin          | `pip install` support       |
 
 ---
 
 ## Roadmap
 
+- [x] Lattice mode (gridline-based extraction)
+- [x] Stream mode (coordinate-based inference)
+- [x] DL Router with feedback pipeline
+- [x] CLI interface
 - [x] Docker REST API server
+- [x] Node.js npm wrapper + NAPI-RS bindings
 - [ ] PyO3 Python bindings
-- [x] Node.js npm wrapper package
-- [x] NAPI-RS Node.js bindings
 - [ ] WebAssembly build (in-browser)
 - [ ] Benchmark suite with real-world comparisons
 
@@ -209,122 +223,9 @@ MIT OR Apache-2.0
 
 # 🇰🇷 한국어
 
-**Table Rust EXtractor** — PDF에서 표(Table)만 추출하는 Rust 엔진.
+**Table Rust EXtractor** — 외부 의존성 없이 PDF에서 표를 추출하는 Rust 엔진. Node.js와 Python에서 바로 사용할 수 있습니다.
 
-```bash
-trex extract invoice.pdf --format json
-```
-
-```json
-[
-    {
-        "page": 1,
-        "table_index": 0,
-        "headers": ["항목", "수량", "단가", "금액"],
-        "rows": [
-            ["A4 용지", "10", "5,000", "50,000"],
-            ["토너", "2", "35,000", "70,000"]
-        ]
-    }
-]
-```
-
----
-
-## 왜 TREX인가
-
-기존 PDF 테이블 추출 도구들은 파이썬 생태계에 집중되어 있습니다.
-OpenCV, Ghostscript, Pandas, Java 등 무거운 런타임 의존성이 필요하고, 서버리스 환경에서는 메모리 제약으로 인해 대용량 처리가 어렵습니다.
-
-TREX는 외부 의존성 없이 단일 바이너리로 동작하는 경량 대안입니다.
-
-- **외부 의존성 제로**: OpenCV, Ghostscript 등 네이티브 라이브러리 불필요
-- **낮은 메모리 사용**: 서버리스 컨테이너(Cloud Run, Lambda)에서 OOM 없이 동작
-- **단일 바이너리 배포**: 컨테이너 이미지 크기 최소화
-
----
-
-## 파싱 엔진
-
-TREX는 두 가지 모드로 표를 탐지합니다.
-
-**Lattice** — 격자선이 있는 표를 처리합니다. 경량 CV 알고리즘으로 수평/수직 선분을 탐지하고 교차점으로부터 셀 영역을 결정합니다. OpenCV 없이 동작합니다.
-
-**Stream** — 격자선이 없는 표를 처리합니다. 텍스트 박스의 좌표를 군집화(Clustering) 알고리즘으로 분석하여 열(Column)과 행(Row)을 추론합니다.
-
-**DL Router(선택)** — 페이지 피처 기반 모델로 Lattice / Stream / Blend 전략을 선택합니다. `--features dl`로 빌드하고 ONNX 모델 경로를 전달하면 사용할 수 있습니다.
-
-```mermaid
-graph LR
-    A[PDF] --> B{선 존재 여부}
-    B -->|Yes| C[Lattice]
-    B -->|No| D[Stream]
-    C --> E[Cell Merge]
-    D --> E
-    E --> F[JSON Output]
-```
-
----
-
-## 사용 방법
-
-### CLI
-
-```bash
-# 단일 파일
-trex extract report.pdf
-
-# 특정 페이지만
-trex extract report.pdf --pages 3,5,7
-
-# 파싱 모드 지정
-trex extract report.pdf --mode lattice
-
-# DL 라우터 모드 (선택)
-cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router.onnx
-
-# 출력 형식
-trex extract report.pdf --format csv > output.csv
-
-# 피드백 루프용 이벤트 로그 기록
-trex extract report.pdf \
-  --event-log logs/extraction_events.ndjson \
-  --event-document-key "doc-123" \
-  --event-tenant-id "tenant-a" \
-  --event-training-opt-in
-```
-
-출력 언어는 시스템 로케일(`LC_ALL`, `LC_MESSAGES`, `LANG`)을 기준으로 선택됩니다.
-명시적으로 고정하려면 `TREX_LANG=ko` 또는 `TREX_LANG=en`을 사용하세요.
-
-### 피드백 루프(모델 업데이트)
-
-챗봇/문서 처리 서비스에서 실패 이벤트를 모은 뒤 배치 학습으로 라우터 모델을 업데이트할 수 있습니다.
-
-```bash
-python3 ml/update_router.py \
-  --events logs/extraction_events.ndjson \
-  --work-dir ml/artifacts/update
-```
-
-TREX 자체에 항상 실행되는 서버는 없으므로, 수동 실행 또는 별도 스케줄러(예: GitHub Actions schedule)로 운영하세요.
-
-전체 절차는 `ml/README.md`를 참고하세요.
-커스텀 모델 입출력 호환 규격은 `ml/MODEL_CONTRACT.md`를 참고하세요.
-
-### Docker (REST API)
-
-```bash
-docker build -t trex .
-docker run --rm -p 8080:8080 trex
-
-curl -X POST http://localhost:8080/extract \
-  -F "file=@invoice.pdf" \
-  -F "mode=auto" \
-  -F "format=json"
-```
-
-요청 단위 언어는 `Accept-Language` 헤더(`en-US`, `ko-KR` 등)로 제어할 수 있습니다.
+## 빠른 시작
 
 ### Node.js
 
@@ -336,26 +237,144 @@ npm install @dreamyoungs/trex
 const { extract } = require("@dreamyoungs/trex");
 
 const tables = await extract("invoice.pdf", {
-  pages: [1, 2],
-  mode: "auto",
-  // 선택: CLI 경로 직접 지정
-  // binPath: "/usr/local/bin/trex",
+    pages: [1, 2],
+    mode: "auto"
 });
 
-console.log(tables[0].rows);
+console.log(tables[0].headers); // ["항목", "수량", "단가", "금액"]
+console.log(tables[0].rows); // [["A4 용지", "10", "5,000", "50,000"], ...]
 ```
 
-npm 패키지는 CLI 래퍼입니다.
-설치 시 GitHub Releases에서 플랫폼에 맞는 TREX 바이너리 다운로드를 시도합니다.
-자동 다운로드가 불가능하면 로컬 바이너리 경로를 `TREX_BIN`(또는 `binPath`)으로 지정하세요.
-메인테이너는 `scripts/release/publish_assets.sh` 스크립트로 릴리즈 바이너리를 업로드할 수 있습니다.
-
-네이티브 Node.js 바인딩(NAPI-RS)은 `bindings/node`를 사용하세요:
+### CLI
 
 ```bash
-cd bindings/node
-npm install
-npm run build
+trex extract invoice.pdf --format json
+trex extract invoice.pdf --format csv > output.csv
+trex extract invoice.pdf --pages 3,5,7 --mode lattice
+```
+
+### Docker
+
+```bash
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
+
+curl -X POST http://localhost:8080/extract \
+  -F "file=@invoice.pdf" \
+  -F "mode=auto" \
+  -F "format=json"
+```
+
+---
+
+## 왜 TREX인가
+
+PDF 테이블 추출은 오랫동안 파이썬 생태계가 독점해 왔습니다. Camelot, Tabula, pdfplumber 등 모든 도구가 무거운 런타임(OpenCV, Ghostscript, Java)을 필요로 하며, 서버리스 환경에서는 메모리 제한으로 대용량 처리가 어렵습니다.
+
+TREX는 다른 접근 방식을 택합니다:
+
+|                   | 기존 파이썬 도구              | TREX                          |
+| ----------------- | ----------------------------- | ----------------------------- |
+| **런타임**        | Python + OpenCV + Ghostscript | 단일 Rust 바이너리            |
+| **메모리**        | 200–500 MB+                   | ~30 MB                        |
+| **컨테이너 크기** | 500 MB+                       | ~15 MB                        |
+| **언어 지원**     | Python만 가능                 | Rust, Node.js, Python, Docker |
+| **개선 루프**     | 수동                          | DL Router + ML 학습 스크립트  |
+
+### 핵심 장점
+
+- **🚀 경량 & 고속** — 단일 바이너리, 네이티브 의존성 제로. 서버리스 컨테이너(Cloud Run, Lambda)에서 OOM 없이 즉시 실행.
+- **🧠 DL 기반 개선 가능** — 선택적 DL Router를 추출 실패 데이터로 재학습하여 정확도를 높일 수 있습니다. 학습 파이프라인은 수동 실행 또는 스케줄러(예: GitHub Actions cron)로 운영합니다.
+- **🌍 멀티 런타임** — Node.js(`npm install`), Python(`pip install`), Docker REST API, CLI 모두 지원. 동일한 Rust 코어가 모든 환경을 구동합니다.
+- **🔧 프로덕션 레디 텔레메트리** — 내장 이벤트 로그(`--event-log`)로 추출 메트릭을 캡처하여 모니터링에 활용합니다. 수집된 이벤트를 ML 학습 파이프라인에 넣어 라우터 모델을 재학습할 수 있습니다.
+
+---
+
+## 파싱 엔진
+
+TREX는 세 가지 전략으로 표를 탐지합니다.
+
+**Lattice** — 격자선이 있는 표를 처리합니다. 선분을 탐지하고 교차점으로부터 셀 영역을 결정합니다. OpenCV 불필요.
+
+**Stream** — 격자선이 없는 표를 처리합니다. 텍스트 박스 좌표를 군집화하여 열과 행을 추론합니다.
+
+**DL Router** _(선택)_ — 경량 ONNX 모델이 페이지 피처를 분석하여 최적 전략(Lattice / Stream / Blend)을 선택합니다. 모델이 없으면 내장 휴리스틱 라우터가 대체합니다.
+
+```mermaid
+graph LR
+    A[PDF] --> B{DL Router}
+    B -->|격자선| C[Lattice]
+    B -->|텍스트만| D[Stream]
+    B -->|혼합| G[Blend]
+    C --> E[Cell Merge]
+    D --> E
+    G --> E
+    E --> F[JSON / CSV]
+```
+
+### 피드백 루프
+
+운영 환경에서 추출 이벤트를 수집하고 라우터 모델을 배치 재학습합니다:
+
+```bash
+# 1. 이벤트 로그 활성화하여 실행
+trex extract report.pdf \
+  --event-log logs/extraction_events.ndjson \
+  --event-document-key "doc-123" \
+  --event-training-opt-in
+
+# 2. 라우터 모델 재학습
+python3 ml/update_router.py \
+  --events logs/extraction_events.ndjson \
+  --work-dir ml/artifacts/update
+```
+
+상시 실행 서버가 아닙니다 — 수동 실행 또는 스케줄러(예: GitHub Actions cron)로 운영하세요.
+전체 파이프라인은 [`ml/README.md`](ml/README.md), 모델 I/O 스펙은 [`ml/MODEL_CONTRACT.md`](ml/MODEL_CONTRACT.md)를 참고하세요.
+
+---
+
+## 상세 사용법
+
+### CLI 옵션
+
+```bash
+trex extract <file.pdf> [OPTIONS]
+
+Options:
+  --pages <1,3,5 | 1-10>     처리할 페이지
+  --mode <auto|lattice|stream|dl>  파싱 모드 (기본: auto)
+  --format <json|csv>         출력 형식 (기본: json)
+  --dl-model <path.onnx>      DL 라우터 모델 경로 (--features dl 필요)
+  --dl-min-confidence <0.55>  DL 라우팅 최소 신뢰도
+  --event-log <path.ndjson>   피드백 루프용 이벤트 기록
+  --event-document-key <key>  이벤트 문서 식별자
+  --event-tenant-id <id>      테넌트 식별자
+  --event-training-opt-in     학습 데이터 활용 동의
+```
+
+출력 언어는 시스템 로케일(`LC_ALL`, `LANG`)을 따릅니다. `TREX_LANG=ko` 또는 `TREX_LANG=en`으로 명시적 지정 가능.
+
+### Node.js
+
+npm 패키지(`@dreamyoungs/trex`)는 GitHub Releases에서 플랫폼 바이너리를 자동 다운로드하는 CLI 래퍼입니다.
+
+```javascript
+const { extract } = require("@dreamyoungs/trex");
+
+const tables = await extract("invoice.pdf", {
+    pages: [1, 2],
+    mode: "auto"
+    // binPath: "/usr/local/bin/trex",  // 선택: 바이너리 경로 직접 지정
+});
+```
+
+자동 다운로드 불가 시 `TREX_BIN` 또는 `binPath`로 지정.
+
+네이티브 Node.js 바인딩(NAPI-RS):
+
+```bash
+cd bindings/node && npm install && npm run build
 ```
 
 ### Python
@@ -367,40 +386,47 @@ tables = trex.extract("invoice.pdf", pages=[1, 2])
 print(tables[0].rows)
 ```
 
+### Docker REST API
+
+```bash
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
+```
+
+요청 단위 언어: `Accept-Language: ko-KR` 헤더 사용.
+
 ---
 
 ## 설계 원칙
 
-TREX는 **한 가지 일만 합니다**: 페이지 위의 물리적 표 레이아웃을 2D 배열로 변환하는 것.
+TREX는 **한 가지 일만 합니다**: 페이지 위의 물리적 표 레이아웃을 2D 배열로 변환.
 
-의도적으로 하지 않는 것들:
-
-- LLM 기반 문서 분석이나 문맥 해석
-- 페이지를 넘나드는 표의 자동 병합
-- 헤더 정규화, 데이터 타입 추론 등 비즈니스 로직
-
-이런 후처리는 TREX의 출력을 받아 상위 애플리케이션에서 처리하는 것이 올바른 구조입니다.
+의도적으로 하지 않는 것: LLM 기반 분석, 페이지 간 표 병합, 헤더 정규화, 데이터 타입 추론. 이런 후처리는 TREX 출력을 소비하는 애플리케이션 레이어에서 처리해야 합니다.
 
 ---
 
 ## 기술 스택
 
-| 영역           | 선택                    | 비고                 |
-| -------------- | ----------------------- | -------------------- |
-| 언어           | Rust                    |                      |
-| PDF 파서       | `lopdf` / `pdf-extract` | 저수준 PDF 구조 접근 |
-| HTTP 서버      | Axum                    | Docker REST API 용   |
-| Python 바인딩  | PyO3 + maturin          | `pip install` 지원   |
-| Node.js        | CLI 래퍼 + NAPI-RS      | `npm/trex`, `bindings/node` |
+| 영역          | 선택                    | 비고                        |
+| ------------- | ----------------------- | --------------------------- |
+| 언어          | Rust                    | 코어 엔진                   |
+| PDF 파서      | `lopdf` / `pdf-extract` | 저수준 PDF 구조 접근        |
+| DL 런타임     | `tract-onnx` (선택)     | ONNX 모델 추론              |
+| HTTP 서버     | Axum                    | Docker REST API             |
+| Node.js       | CLI 래퍼 + NAPI-RS      | `npm/trex`, `bindings/node` |
+| Python 바인딩 | PyO3 + maturin          | `pip install` 지원          |
 
 ---
 
 ## 로드맵
 
+- [x] Lattice 모드 (격자선 기반 추출)
+- [x] Stream 모드 (좌표 기반 추론)
+- [x] DL Router + 피드백 파이프라인
+- [x] CLI 인터페이스
 - [x] Docker REST API 서버
+- [x] Node.js npm 래퍼 + NAPI-RS 바인딩
 - [ ] PyO3 Python 바인딩
-- [x] Node.js npm 래퍼 패키지
-- [x] NAPI-RS Node.js 바인딩
 - [ ] WebAssembly 빌드 (브라우저 내 동작)
 - [ ] 벤치마크 스위트 및 실측 비교
 
