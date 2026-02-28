@@ -1,0 +1,82 @@
+name: Release
+
+on:
+    push:
+        tags:
+            - "v*"
+
+permissions:
+    contents: write
+
+jobs:
+    build:
+        strategy:
+            matrix:
+                include:
+                    - os: macos-latest
+                      target: aarch64-apple-darwin
+                      binary: trex
+                      asset: trex-aarch64-apple-darwin
+
+                    - os: macos-latest
+                      target: x86_64-apple-darwin
+                      binary: trex
+                      asset: trex-x86_64-apple-darwin
+
+                    - os: ubuntu-latest
+                      target: x86_64-unknown-linux-gnu
+                      binary: trex
+                      asset: trex-x86_64-unknown-linux-gnu
+
+                    - os: ubuntu-latest
+                      target: aarch64-unknown-linux-gnu
+                      binary: trex
+                      asset: trex-aarch64-unknown-linux-gnu
+                      cross: true
+
+                    - os: windows-latest
+                      target: x86_64-pc-windows-msvc
+                      binary: trex.exe
+                      asset: trex-x86_64-pc-windows-msvc.exe
+
+        runs-on: ${{ matrix.os }}
+
+        steps:
+            - uses: actions/checkout@v4
+
+            - name: Rust 툴체인 설치
+              uses: dtolnay/rust-toolchain@stable
+              with:
+                  targets: ${{ matrix.target }}
+
+            # Linux ARM64 크로스 컴파일용
+            - name: cross 설치
+              if: matrix.cross
+              run: |
+                  sudo apt-get update
+                  sudo apt-get install -y gcc-aarch64-linux-gnu
+                  cargo install cross --git https://github.com/cross-rs/cross
+
+            # 일반 빌드
+            - name: 빌드
+              if: "!matrix.cross"
+              run: cargo build --release --target ${{ matrix.target }}
+
+            # 크로스 빌드
+            - name: 크로스 빌드
+              if: matrix.cross
+              run: cross build --release --target ${{ matrix.target }}
+
+            # 바이너리 이름 변경
+            - name: 바이너리 준비 (Unix)
+              if: runner.os != 'Windows'
+              run: cp target/${{ matrix.target }}/release/${{ matrix.binary }} ${{ matrix.asset }}
+
+            - name: 바이너리 준비 (Windows)
+              if: runner.os == 'Windows'
+              run: Copy-Item "target/${{ matrix.target }}/release/${{ matrix.binary }}" "${{ matrix.asset }}"
+
+            - name: 릴리즈에 업로드
+              uses: softprops/action-gh-release@v2
+              with:
+                  files: ${{ matrix.asset }}
