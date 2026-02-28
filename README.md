@@ -1,0 +1,147 @@
+# TREX
+
+**Table Rust EXtractor** — PDF에서 표(Table)만 추출하는 Rust 엔진.
+
+```bash
+trex extract invoice.pdf --format json
+```
+
+```json
+[
+    {
+        "page": 1,
+        "table_index": 0,
+        "headers": ["항목", "수량", "단가", "금액"],
+        "rows": [
+            ["A4 용지", "10", "5,000", "50,000"],
+            ["토너", "2", "35,000", "70,000"]
+        ]
+    }
+]
+```
+
+---
+
+## 왜 TREX인가
+
+기존 PDF 테이블 추출 도구들은 파이썬 생태계에 집중되어 있습니다.
+OpenCV, Ghostscript, Pandas, Java 등 무거운 런타임 의존성이 필요하고, 서버리스 환경에서는 메모리 제약으로 인해 대용량 처리가 어렵습니다.
+
+TREX는 외부 의존성 없이 단일 바이너리로 동작하는 경량 대안입니다.
+
+- **외부 의존성 제로**: OpenCV, Ghostscript 등 네이티브 라이브러리 불필요
+- **낮은 메모리 사용**: 서버리스 컨테이너(Cloud Run, Lambda)에서 OOM 없이 동작
+- **단일 바이너리 배포**: 컨테이너 이미지 크기 최소화
+
+---
+
+## 파싱 엔진
+
+TREX는 두 가지 모드로 표를 탐지합니다.
+
+**Lattice** — 격자선이 있는 표를 처리합니다. 경량 CV 알고리즘으로 수평/수직 선분을 탐지하고 교차점으로부터 셀 영역을 결정합니다. OpenCV 없이 동작합니다.
+
+**Stream** — 격자선이 없는 표를 처리합니다. 텍스트 박스의 좌표를 군집화(Clustering) 알고리즘으로 분석하여 열(Column)과 행(Row)을 추론합니다.
+
+```mermaid
+graph LR
+    A[PDF] --> B{선 존재 여부}
+    B -->|Yes| C[Lattice]
+    B -->|No| D[Stream]
+    C --> E[Cell Merge]
+    D --> E
+    E --> F[JSON Output]
+```
+
+---
+
+## 사용 방법
+
+### CLI
+
+```bash
+# 단일 파일
+trex extract report.pdf
+
+# 특정 페이지만
+trex extract report.pdf --pages 3,5,7
+
+# 파싱 모드 지정
+trex extract report.pdf --mode lattice
+
+# 출력 형식
+trex extract report.pdf --format csv > output.csv
+```
+
+### Docker (REST API)
+
+```bash
+docker run -p 8080:8080 ghcr.io/dreamyoungs/trex
+
+curl -X POST http://localhost:8080/extract \
+  -F "file=@invoice.pdf" \
+  -H "Accept: application/json"
+```
+
+### Node.js
+
+```javascript
+const { extract } = require("@dreamyoungs/trex");
+
+const tables = await extract("invoice.pdf", { pages: [1, 2] });
+console.log(tables[0].rows);
+```
+
+### Python
+
+```python
+import trex
+
+tables = trex.extract("invoice.pdf", pages=[1, 2])
+print(tables[0].rows)
+```
+
+---
+
+## 설계 원칙
+
+TREX는 **한 가지 일만 합니다**: 페이지 위의 물리적 표 레이아웃을 2D 배열로 변환하는 것.
+
+의도적으로 하지 않는 것들:
+
+- LLM 기반 문서 분석이나 문맥 해석
+- 페이지를 넘나드는 표의 자동 병합
+- 헤더 정규화, 데이터 타입 추론 등 비즈니스 로직
+
+이런 후처리는 TREX의 출력을 받아 상위 애플리케이션에서 처리하는 것이 올바른 구조입니다.
+
+---
+
+## 기술 스택
+
+| 영역           | 선택                    | 비고                 |
+| -------------- | ----------------------- | -------------------- |
+| 언어           | Rust                    |                      |
+| PDF 파서       | `lopdf` / `pdf-extract` | 저수준 PDF 구조 접근 |
+| HTTP 서버      | Axum                    | Docker REST API 용   |
+| Python 바인딩  | PyO3 + maturin          | `pip install` 지원   |
+| Node.js 바인딩 | NAPI-RS                 | `npm install` 지원   |
+
+---
+
+## 로드맵
+
+- [ ] Lattice 모드 구현 (격자선 기반 추출)
+- [ ] Stream 모드 구현 (좌표 기반 추론)
+- [ ] CLI 인터페이스
+- [ ] Docker REST API 서버
+- [ ] PyO3 Python 바인딩
+- [ ] NAPI-RS Node.js 바인딩
+- [ ] WebAssembly 빌드 (브라우저 내 동작)
+- [ ] 벤치마크 스위트 및 실측 비교
+
+---
+
+## 라이선스
+
+MIT OR Apache-2.0

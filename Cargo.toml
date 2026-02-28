@@ -1,0 +1,43 @@
+[package]
+name = "trex"
+version = "0.1.0"
+edition = "2024"
+description = "Table Rust EXtractor — PDF에서 표(Table)만 추출하는 Rust 엔진"
+license = "MIT OR Apache-2.0"
+repository = "https://github.com/dreamyoungs/trex"
+readme = "README.md"
+keywords = ["pdf", "table", "extraction", "parser"]
+categories = ["command-line-utilities", "parser-implementations"]
+
+[lib]
+name = "trex"
+path = "src/lib.rs"
+
+[[bin]]
+name = "trex"
+path = "src/main.rs"
+
+[dependencies]
+# PDF 파싱
+lopdf = "0.36"
+
+# CLI
+clap = { version = "4", features = ["derive"] }
+
+# 직렬화
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# 에러 처리
+thiserror = "2"
+
+[dev-dependencies]
+criterion = "0.5"
+
+[features]
+default = []
+dl = []  # DL 모드 활성화 시 ONNX 런타임 포함 (Phase 4)
+
+[[bench]]
+name = "extraction"
+harness = false

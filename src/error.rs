@@ -1,0 +1,29 @@
+//! TREX 에러 타입 정의
+
+/// TREX에서 발생할 수 있는 모든 에러를 분류한다.
+#[derive(Debug, thiserror::Error)]
+pub enum TrexError {
+    /// PDF 파일을 읽거나 파싱하는 중 발생한 에러
+    #[error("PDF 파싱 에러: {0}")]
+    PdfParse(String),
+
+    /// 테이블 탐지 중 발생한 에러
+    #[error("테이블 탐지 에러: {0}")]
+    Detection(String),
+
+    /// 셀 병합 중 발생한 에러
+    #[error("셀 병합 에러: {0}")]
+    Merge(String),
+
+    /// 출력 변환 중 발생한 에러
+    #[error("출력 변환 에러: {0}")]
+    Output(String),
+
+    /// 파일 I/O 에러
+    #[error("파일 I/O 에러: {0}")]
+    Io(#[from] std::io::Error),
+
+    /// JSON 직렬화/역직렬화 에러
+    #[error("JSON 에러: {0}")]
+    Json(#[from] serde_json::Error),
+}

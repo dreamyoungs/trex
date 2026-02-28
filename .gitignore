@@ -1,0 +1,13 @@
+# 빌드 결과물
+/target/
+
+# 에디터/IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
