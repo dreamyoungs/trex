@@ -20,9 +20,11 @@
 
 pub mod detect;
 pub mod error;
+pub mod i18n;
 pub mod merge;
 pub mod output;
 pub mod pdf;
+pub mod telemetry;
 
 use std::collections::BTreeSet;
 use std::path::{Path, PathBuf};
@@ -201,10 +203,18 @@ fn resolve_pages(requested_pages: Option<&[u32]>, page_count: u32) -> Result<Vec
 
             for &page in pages {
                 if page == 0 || page > page_count {
-                    return Err(TrexError::PdfParse(format!(
-                        "요청한 페이지 {}가 범위를 벗어났습니다. (1-{})",
-                        page, page_count
-                    )));
+                    let detail = if i18n::is_korean() {
+                        format!(
+                            "요청한 페이지 {}가 범위를 벗어났습니다. (1-{})",
+                            page, page_count
+                        )
+                    } else {
+                        format!(
+                            "Requested page {} is out of range. (valid: 1-{})",
+                            page, page_count
+                        )
+                    };
+                    return Err(TrexError::PdfParse(detail));
                 }
                 unique_pages.insert(page);
             }

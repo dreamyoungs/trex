@@ -78,25 +78,77 @@ cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router
 
 # Output format
 trex extract report.pdf --format csv > output.csv
+
+# Emit extraction event log for feedback loop
+trex extract report.pdf \
+  --event-log logs/extraction_events.ndjson \
+  --event-document-key "doc-123" \
+  --event-tenant-id "tenant-a" \
+  --event-training-opt-in
 ```
+
+Language output is selected from system locale (`LC_ALL`, `LC_MESSAGES`, `LANG`).
+Use `TREX_LANG=ko` or `TREX_LANG=en` to override explicitly.
+
+### Feedback Loop (Model Updates)
+
+If you run TREX in a production chatbot/doc-processing service, collect failure events and retrain router models in batch:
+
+```bash
+python3 ml/update_router.py \
+  --events logs/extraction_events.ndjson \
+  --work-dir ml/artifacts/update
+```
+
+TREX does not include a built-in always-on server. Run this manually or via your own scheduler (for example, GitHub Actions schedule).
+
+See `ml/README.md` for the full pipeline.
+For custom model compatibility, see `ml/MODEL_CONTRACT.md`.
 
 ### Docker (REST API)
 
 ```bash
-docker run -p 8080:8080 ghcr.io/dreamyoungs/trex
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
 
 curl -X POST http://localhost:8080/extract \
   -F "file=@invoice.pdf" \
-  -H "Accept: application/json"
+  -F "mode=auto" \
+  -F "format=json"
 ```
 
+Per-request language can be controlled with `Accept-Language` (e.g. `en-US`, `ko-KR`).
+
 ### Node.js
+
+```bash
+npm install @dreamyoungs/trex
+```
 
 ```javascript
 const { extract } = require("@dreamyoungs/trex");
 
-const tables = await extract("invoice.pdf", { pages: [1, 2] });
+const tables = await extract("invoice.pdf", {
+  pages: [1, 2],
+  mode: "auto",
+  // optional: override CLI path
+  // binPath: "/usr/local/bin/trex",
+});
+
 console.log(tables[0].rows);
+```
+
+The npm package is a CLI wrapper.
+On install, it tries to download a matching TREX binary from GitHub Releases.
+If auto-download is unavailable, set `TREX_BIN` (or `binPath`) to a local TREX binary.
+Maintainers can publish release assets with `scripts/release/publish_assets.sh`.
+
+For native Node.js bindings (NAPI-RS), see `bindings/node`:
+
+```bash
+cd bindings/node
+npm install
+npm run build
 ```
 
 ### Python
@@ -132,18 +184,16 @@ Such post-processing should be handled by the application layer consuming TREX's
 | PDF Parser       | `lopdf` / `pdf-extract` | Low-level PDF access  |
 | HTTP Server      | Axum                    | For Docker REST API   |
 | Python Bindings  | PyO3 + maturin          | `pip install` support |
-| Node.js Bindings | NAPI-RS                 | `npm install` support |
+| Node.js          | CLI wrapper + NAPI-RS   | `npm/trex`, `bindings/node` |
 
 ---
 
 ## Roadmap
 
-- [ ] Lattice mode (gridline-based extraction)
-- [ ] Stream mode (coordinate-based inference)
-- [ ] CLI interface
-- [ ] Docker REST API server
+- [x] Docker REST API server
 - [ ] PyO3 Python bindings
-- [ ] NAPI-RS Node.js bindings
+- [x] Node.js npm wrapper package
+- [x] NAPI-RS Node.js bindings
 - [ ] WebAssembly build (in-browser)
 - [ ] Benchmark suite with real-world comparisons
 
@@ -235,25 +285,77 @@ cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router
 
 # 출력 형식
 trex extract report.pdf --format csv > output.csv
+
+# 피드백 루프용 이벤트 로그 기록
+trex extract report.pdf \
+  --event-log logs/extraction_events.ndjson \
+  --event-document-key "doc-123" \
+  --event-tenant-id "tenant-a" \
+  --event-training-opt-in
 ```
+
+출력 언어는 시스템 로케일(`LC_ALL`, `LC_MESSAGES`, `LANG`)을 기준으로 선택됩니다.
+명시적으로 고정하려면 `TREX_LANG=ko` 또는 `TREX_LANG=en`을 사용하세요.
+
+### 피드백 루프(모델 업데이트)
+
+챗봇/문서 처리 서비스에서 실패 이벤트를 모은 뒤 배치 학습으로 라우터 모델을 업데이트할 수 있습니다.
+
+```bash
+python3 ml/update_router.py \
+  --events logs/extraction_events.ndjson \
+  --work-dir ml/artifacts/update
+```
+
+TREX 자체에 항상 실행되는 서버는 없으므로, 수동 실행 또는 별도 스케줄러(예: GitHub Actions schedule)로 운영하세요.
+
+전체 절차는 `ml/README.md`를 참고하세요.
+커스텀 모델 입출력 호환 규격은 `ml/MODEL_CONTRACT.md`를 참고하세요.
 
 ### Docker (REST API)
 
 ```bash
-docker run -p 8080:8080 ghcr.io/dreamyoungs/trex
+docker build -t trex .
+docker run --rm -p 8080:8080 trex
 
 curl -X POST http://localhost:8080/extract \
   -F "file=@invoice.pdf" \
-  -H "Accept: application/json"
+  -F "mode=auto" \
+  -F "format=json"
 ```
 
+요청 단위 언어는 `Accept-Language` 헤더(`en-US`, `ko-KR` 등)로 제어할 수 있습니다.
+
 ### Node.js
+
+```bash
+npm install @dreamyoungs/trex
+```
 
 ```javascript
 const { extract } = require("@dreamyoungs/trex");
 
-const tables = await extract("invoice.pdf", { pages: [1, 2] });
+const tables = await extract("invoice.pdf", {
+  pages: [1, 2],
+  mode: "auto",
+  // 선택: CLI 경로 직접 지정
+  // binPath: "/usr/local/bin/trex",
+});
+
 console.log(tables[0].rows);
+```
+
+npm 패키지는 CLI 래퍼입니다.
+설치 시 GitHub Releases에서 플랫폼에 맞는 TREX 바이너리 다운로드를 시도합니다.
+자동 다운로드가 불가능하면 로컬 바이너리 경로를 `TREX_BIN`(또는 `binPath`)으로 지정하세요.
+메인테이너는 `scripts/release/publish_assets.sh` 스크립트로 릴리즈 바이너리를 업로드할 수 있습니다.
+
+네이티브 Node.js 바인딩(NAPI-RS)은 `bindings/node`를 사용하세요:
+
+```bash
+cd bindings/node
+npm install
+npm run build
 ```
 
 ### Python
@@ -289,18 +391,16 @@ TREX는 **한 가지 일만 합니다**: 페이지 위의 물리적 표 레이�
 | PDF 파서       | `lopdf` / `pdf-extract` | 저수준 PDF 구조 접근 |
 | HTTP 서버      | Axum                    | Docker REST API 용   |
 | Python 바인딩  | PyO3 + maturin          | `pip install` 지원   |
-| Node.js 바인딩 | NAPI-RS                 | `npm install` 지원   |
+| Node.js        | CLI 래퍼 + NAPI-RS      | `npm/trex`, `bindings/node` |
 
 ---
 
 ## 로드맵
 
-- [ ] Lattice 모드 구현 (격자선 기반 추출)
-- [ ] Stream 모드 구현 (좌표 기반 추론)
-- [ ] CLI 인터페이스
-- [ ] Docker REST API 서버
+- [x] Docker REST API 서버
 - [ ] PyO3 Python 바인딩
-- [ ] NAPI-RS Node.js 바인딩
+- [x] Node.js npm 래퍼 패키지
+- [x] NAPI-RS Node.js 바인딩
 - [ ] WebAssembly 빌드 (브라우저 내 동작)
 - [ ] 벤치마크 스위트 및 실측 비교
 

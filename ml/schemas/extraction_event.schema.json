@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dreamyoungs/trex/ml/schemas/extraction_event.schema.json",
+  "title": "TREX Extraction Event",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "event_version",
+    "ts_unix_ms",
+    "status",
+    "document_key",
+    "requested_mode",
+    "duration_ms",
+    "training_opt_in"
+  ],
+  "properties": {
+    "event_version": { "type": "integer", "minimum": 1 },
+    "ts_unix_ms": { "type": "integer", "minimum": 0 },
+    "status": { "type": "string", "enum": ["ok", "error"] },
+    "tenant_id": { "type": ["string", "null"] },
+    "request_id": { "type": ["string", "null"] },
+    "document_key": { "type": "string", "minLength": 1 },
+    "training_opt_in": { "type": "boolean" },
+    "feedback_tag": { "type": ["string", "null"] },
+    "requested_mode": {
+      "type": "string",
+      "enum": ["auto", "lattice", "stream", "dl"]
+    },
+    "pages_requested": {
+      "type": ["array", "null"],
+      "items": { "type": "integer", "minimum": 1 }
+    },
+    "dl_model_path": { "type": ["string", "null"] },
+    "dl_min_confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+    "dl_fallback": {
+      "type": "string",
+      "enum": ["auto", "lattice", "stream"]
+    },
+    "duration_ms": { "type": "integer", "minimum": 0 },
+    "table_count": { "type": ["integer", "null"], "minimum": 0 },
+    "page_metrics": {
+      "type": ["array", "null"],
+      "items": {
+        "type": "object",
+        "required": ["page", "table_count", "non_empty_cells", "mean_density"],
+        "properties": {
+          "page": { "type": "integer", "minimum": 1 },
+          "table_count": { "type": "integer", "minimum": 0 },
+          "non_empty_cells": { "type": "integer", "minimum": 0 },
+          "mean_density": { "type": "number", "minimum": 0.0, "maximum": 1.0 }
+        }
+      }
+    },
+    "error_code": { "type": ["string", "null"] },
+    "error_message": { "type": ["string", "null"] },
+    "page_features": {
+      "description": "Optional page features used for router training",
+      "type": ["object", "null"],
+      "additionalProperties": { "type": "number" }
+    },
+    "quality_score": {
+      "description": "Optional external quality score from service evaluator",
+      "type": ["number", "null"],
+      "minimum": 0.0
+    }
+  }
+}

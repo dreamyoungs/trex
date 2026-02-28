@@ -4,7 +4,7 @@
 //! 최종적으로 행/열 기반의 2D 문자열 배열을 생성한다.
 
 use crate::detect::CellRegion;
-use crate::{BBox, Table, TextBox, error::TrexError};
+use crate::{BBox, Table, TextBox, error::TrexError, i18n};
 
 /// 셀 영역과 텍스트 박스를 매핑하여 2D 배열을 생성한다.
 ///
@@ -20,7 +20,9 @@ pub fn merge_cells(
     table_index: usize,
 ) -> Result<Table, TrexError> {
     if cells.is_empty() {
-        return Err(TrexError::Merge("병합할 셀 영역이 없습니다".to_string()));
+        return Err(TrexError::Merge(
+            i18n::text("병합할 셀 영역이 없습니다", "No cell regions to merge").to_string(),
+        ));
     }
 
     let row_count = cells
@@ -36,7 +38,7 @@ pub fn merge_cells(
 
     if row_count == 0 || col_count == 0 {
         return Err(TrexError::Merge(
-            "유효하지 않은 셀 그리드입니다".to_string(),
+            i18n::text("유효하지 않은 셀 그리드입니다", "Invalid cell grid").to_string(),
         ));
     }
 

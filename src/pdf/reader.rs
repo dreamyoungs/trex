@@ -3,7 +3,7 @@
 //! `lopdf` 크레이트를 사용하여 PDF 파일을 로딩하고,
 //! 페이지 단위로 분리하여 처리할 수 있도록 한다.
 
-use crate::error::TrexError;
+use crate::{error::TrexError, i18n};
 use std::path::Path;
 
 /// PDF 문서를 나타내는 구조체
@@ -18,12 +18,21 @@ impl PdfDocument {
     /// # Arguments
     /// * `path` - PDF 파일 경로
     pub fn open<P: AsRef<Path>>(path: P) -> Result<Self, TrexError> {
-        let doc = lopdf::Document::load(path)
-            .map_err(|e| TrexError::PdfParse(format!("PDF 로딩 실패: {}", e)))?;
+        let doc = lopdf::Document::load(path).map_err(|e| {
+            TrexError::PdfParse(format!(
+                "{}: {}",
+                i18n::text("PDF 로딩 실패", "Failed to load PDF"),
+                e
+            ))
+        })?;
 
         if doc.is_encrypted() {
             return Err(TrexError::PdfParse(
-                "암호화된 PDF는 현재 지원하지 않습니다".to_string(),
+                i18n::text(
+                    "암호화된 PDF는 현재 지원하지 않습니다",
+                    "Encrypted PDFs are not supported yet",
+                )
+                .to_string(),
             ));
         }
 

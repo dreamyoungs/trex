@@ -1,0 +1,42 @@
+{
+  "name": "@dreamyoungs/trex",
+  "version": "0.1.0",
+  "description": "Node.js wrapper for TREX PDF table extraction CLI",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "require": "./index.js",
+      "default": "./index.js"
+    }
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "postinstall.js",
+    "bin/.gitkeep",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
+  "keywords": [
+    "pdf",
+    "table",
+    "extract",
+    "rust",
+    "trex"
+  ],
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dreamyoungs/trex.git",
+    "directory": "npm/trex"
+  }
+}

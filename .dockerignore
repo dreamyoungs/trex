@@ -1,0 +1,9 @@
+target
+.git
+.github
+tests
+docs
+ml
+npm
+logs
+*.ndjson

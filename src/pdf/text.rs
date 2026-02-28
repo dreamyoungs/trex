@@ -3,7 +3,7 @@
 //! PDF의 Content Stream을 파싱하여 각 텍스트 요소의
 //! 바운딩 박스(x0, y0, x1, y1)와 문자열을 추출한다.
 
-use crate::{BBox, TextBox, error::TrexError};
+use crate::{BBox, TextBox, error::TrexError, i18n};
 use lopdf::{
     Dictionary, Document, Object, ObjectId,
     content::{Content, Operation},
@@ -64,10 +64,14 @@ pub fn extract_text_boxes(
     page_number: u32,
 ) -> Result<Vec<TextBox>, TrexError> {
     let pages = doc.get_pages();
-    let page_id = pages
-        .get(&page_number)
-        .copied()
-        .ok_or_else(|| TrexError::PdfParse(format!("페이지 {}를 찾을 수 없습니다", page_number)))?;
+    let page_id = pages.get(&page_number).copied().ok_or_else(|| {
+        let detail = if i18n::is_korean() {
+            format!("페이지 {}를 찾을 수 없습니다", page_number)
+        } else {
+            format!("Page {} not found", page_number)
+        };
+        TrexError::PdfParse(detail)
+    })?;
 
     let fonts: BTreeMap<Vec<u8>, &Dictionary> = doc.get_page_fonts(page_id).unwrap_or_default();
     let operations = decode_page_operations(doc, page_id);
@@ -204,10 +208,14 @@ pub fn extract_text_boxes(
 /// 선분 목록 (시작점, 끝점)
 pub fn extract_lines(doc: &lopdf::Document, page_number: u32) -> Result<Vec<Line>, TrexError> {
     let pages = doc.get_pages();
-    let page_id = pages
-        .get(&page_number)
-        .copied()
-        .ok_or_else(|| TrexError::PdfParse(format!("페이지 {}를 찾을 수 없습니다", page_number)))?;
+    let page_id = pages.get(&page_number).copied().ok_or_else(|| {
+        let detail = if i18n::is_korean() {
+            format!("페이지 {}를 찾을 수 없습니다", page_number)
+        } else {
+            format!("Page {} not found", page_number)
+        };
+        TrexError::PdfParse(detail)
+    })?;
 
     let operations = decode_page_operations(doc, page_id);
 

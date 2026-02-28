@@ -1,0 +1,422 @@
+{
+  "generated_at": "2026-02-28 22:03:51",
+  "total": 69,
+  "ok": 68,
+  "fail": 1,
+  "results": [
+    {
+      "pdf": "12s0324.pdf",
+      "json": "12s0324.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "20.pdf",
+      "json": "20.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "S2MNCEbirdisland.pdf",
+      "json": "S2MNCEbirdisland.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "agstat.pdf",
+      "json": "agstat.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "anticlockwise_table_1.pdf",
+      "json": "anticlockwise_table_1.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "anticlockwise_table_2.pdf",
+      "json": "anticlockwise_table_2.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "arabic.pdf",
+      "json": "arabic.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "argentina_diputados_voting_record.pdf",
+      "json": "argentina_diputados_voting_record.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "assam.pdf",
+      "json": "assam.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "background_lines_1.pdf",
+      "json": "background_lines_1.json",
+      "exit_code": 0,
+      "tables": 4
+    },
+    {
+      "pdf": "background_lines_2.pdf",
+      "json": "background_lines_2.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "birdisland.pdf",
+      "json": "birdisland.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "budget.pdf",
+      "json": "budget.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "budget_2014-15.pdf",
+      "json": "budget_2014-15.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "campaign_donors.pdf",
+      "json": "campaign_donors.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "china.pdf",
+      "json": "china.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "clockwise_table_1.pdf",
+      "json": "clockwise_table_1.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "clockwise_table_2.pdf",
+      "json": "clockwise_table_2.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "column_span_1.pdf",
+      "json": "column_span_1.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "column_span_2.pdf",
+      "json": "column_span_2.json",
+      "exit_code": 0,
+      "tables": 3
+    },
+    {
+      "pdf": "detect_vertical_false.pdf",
+      "json": "detect_vertical_false.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "diesel_engines.pdf",
+      "json": "diesel_engines.json",
+      "exit_code": 0,
+      "tables": 47
+    },
+    {
+      "pdf": "district_health.pdf",
+      "json": "district_health.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "edge_tol.pdf",
+      "json": "edge_tol.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "electoral_roll.pdf",
+      "json": "electoral_roll.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "empty.pdf",
+      "json": "empty.json",
+      "exit_code": 0,
+      "tables": 0
+    },
+    {
+      "pdf": "eu-002.pdf",
+      "json": "eu-002.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "eu-017.pdf",
+      "json": "eu-017.json",
+      "exit_code": 0,
+      "tables": 6
+    },
+    {
+      "pdf": "failing_sort.pdf",
+      "json": "failing_sort.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "foo.pdf",
+      "json": "foo.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "frx_2012_disclosure.pdf",
+      "json": "frx_2012_disclosure.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "health.pdf",
+      "json": "health.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "health_protected.pdf",
+      "json": "health_protected.json",
+      "exit_code": 1,
+      "error": "추출 오류: PDF 파싱 에러: 암호화된 PDF는 현재 지원하지 않습니다"
+    },
+    {
+      "pdf": "image.pdf",
+      "json": "image.json",
+      "exit_code": 0,
+      "tables": 0
+    },
+    {
+      "pdf": "indictb1h_14.pdf",
+      "json": "indictb1h_14.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "labor.pdf",
+      "json": "labor.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "m27.pdf",
+      "json": "m27.json",
+      "exit_code": 0,
+      "tables": 3
+    },
+    {
+      "pdf": "medicine.pdf",
+      "json": "medicine.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "mednine.pdf",
+      "json": "mednine.json",
+      "exit_code": 0,
+      "tables": 7
+    },
+    {
+      "pdf": "mexican_towns.pdf",
+      "json": "mexican_towns.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "missing_values.pdf",
+      "json": "missing_values.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "multiple_tables.pdf",
+      "json": "multiple_tables.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "offense.pdf",
+      "json": "offense.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "only_page_number.pdf",
+      "json": "only_page_number.json",
+      "exit_code": 0,
+      "tables": 0
+    },
+    {
+      "pdf": "population_growth.pdf",
+      "json": "population_growth.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "puertos1.pdf",
+      "json": "puertos1.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "rainfall_distribution.pdf",
+      "json": "rainfall_distribution.json",
+      "exit_code": 0,
+      "tables": 7
+    },
+    {
+      "pdf": "rotated_page.pdf",
+      "json": "rotated_page.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "row_span_1.pdf",
+      "json": "row_span_1.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "row_span_2.pdf",
+      "json": "row_span_2.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "row_span_3.pdf",
+      "json": "row_span_3.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "schools.pdf",
+      "json": "schools.json",
+      "exit_code": 0,
+      "tables": 10
+    },
+    {
+      "pdf": "should_detect_rulings.pdf",
+      "json": "should_detect_rulings.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "sort_exception.pdf",
+      "json": "sort_exception.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "spanning_cells.pdf",
+      "json": "spanning_cells.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "split_text_lattice.pdf",
+      "json": "split_text_lattice.json",
+      "exit_code": 0,
+      "tables": 3
+    },
+    {
+      "pdf": "spreadsheet_no_bounding_frame.pdf",
+      "json": "spreadsheet_no_bounding_frame.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "stream_inner_outer_columns.pdf",
+      "json": "stream_inner_outer_columns.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "superscript.pdf",
+      "json": "superscript.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "sydney_disclosure_contract.pdf",
+      "json": "sydney_disclosure_contract.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "table_region.pdf",
+      "json": "table_region.json",
+      "exit_code": 0,
+      "tables": 4
+    },
+    {
+      "pdf": "tableception.pdf",
+      "json": "tableception.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "twotables.pdf",
+      "json": "twotables.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "twotables_1.pdf",
+      "json": "twotables_1.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "twotables_2.pdf",
+      "json": "twotables_2.json",
+      "exit_code": 0,
+      "tables": 1
+    },
+    {
+      "pdf": "us-007.pdf",
+      "json": "us-007.json",
+      "exit_code": 0,
+      "tables": 6
+    },
+    {
+      "pdf": "us-017.pdf",
+      "json": "us-017.json",
+      "exit_code": 0,
+      "tables": 5
+    },
+    {
+      "pdf": "us-024.pdf",
+      "json": "us-024.json",
+      "exit_code": 0,
+      "tables": 2
+    },
+    {
+      "pdf": "vertical_header.pdf",
+      "json": "vertical_header.json",
+      "exit_code": 0,
+      "tables": 14
+    }
+  ]
+}

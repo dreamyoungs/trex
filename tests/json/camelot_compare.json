@@ -1,0 +1,979 @@
+{
+  "summary": {
+    "total_files": 69,
+    "trex_ok": 68,
+    "trex_fail": 1,
+    "comparable": 68,
+    "meet_or_exceed_camelot_max": 50,
+    "meet_or_exceed_camelot_lattice": 64,
+    "under_camelot_max": 18
+  },
+  "rows": [
+    {
+      "file": "12s0324.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "20.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "S2MNCEbirdisland.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "agstat.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "anticlockwise_table_1.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "anticlockwise_table_2.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "arabic.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "argentina_diputados_voting_record.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "assam.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "background_lines_1.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 3,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 3,
+        "network": 2,
+        "hybrid": 3
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "background_lines_2.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "birdisland.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "budget.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "budget_2014-15.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "campaign_donors.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "china.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 6,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 1,
+        "network": 5,
+        "hybrid": 6
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "clockwise_table_1.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "clockwise_table_2.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "column_span_1.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "column_span_2.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "detect_vertical_false.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "diesel_engines.pdf",
+      "trex": 39,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "district_health.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "edge_tol.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "electoral_roll.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 20,
+      "camelot_lattice": 10,
+      "camelot_counts": {
+        "lattice": 10,
+        "stream": 1,
+        "network": 11,
+        "hybrid": 20
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "empty.pdf",
+      "trex": 0,
+      "trex_error": null,
+      "camelot_max": 0,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 0,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "eu-002.pdf",
+      "trex": 3,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "eu-017.pdf",
+      "trex": 6,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "failing_sort.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "foo.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "frx_2012_disclosure.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "health.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "health_protected.pdf",
+      "trex": null,
+      "trex_error": "추출 오류: PDF 파싱 에러: 암호화된 PDF는 현재 지원하지 않습니다",
+      "camelot_max": null,
+      "camelot_lattice": null,
+      "camelot_counts": {},
+      "camelot_errors": {
+        "lattice": "FileNotDecryptedError: File has not been decrypted",
+        "stream": "FileNotDecryptedError: File has not been decrypted",
+        "network": "FileNotDecryptedError: File has not been decrypted",
+        "hybrid": "FileNotDecryptedError: File has not been decrypted"
+      }
+    },
+    {
+      "file": "image.pdf",
+      "trex": 0,
+      "trex_error": null,
+      "camelot_max": 0,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 0,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "indictb1h_14.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "labor.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "m27.pdf",
+      "trex": 3,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "medicine.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "mednine.pdf",
+      "trex": 4,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "mexican_towns.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "missing_values.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "multiple_tables.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "offense.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "only_page_number.pdf",
+      "trex": 0,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "population_growth.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "puertos1.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 3,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 3,
+        "hybrid": 3
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "rainfall_distribution.pdf",
+      "trex": 6,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "rotated_page.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "row_span_1.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "row_span_2.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "row_span_3.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "schools.pdf",
+      "trex": 5,
+      "trex_error": null,
+      "camelot_max": 3,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 3,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "should_detect_rulings.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "sort_exception.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 2,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "spanning_cells.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "split_text_lattice.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 5,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 5,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "spreadsheet_no_bounding_frame.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "stream_inner_outer_columns.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "superscript.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "sydney_disclosure_contract.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "table_region.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 0,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "tableception.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 1,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "twotables.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "twotables_1.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 2,
+        "network": 1,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "twotables_2.pdf",
+      "trex": 1,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 2,
+      "camelot_counts": {
+        "lattice": 2,
+        "stream": 1,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "us-007.pdf",
+      "trex": 4,
+      "trex_error": null,
+      "camelot_max": 2,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 2,
+        "network": 2,
+        "hybrid": 2
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "us-017.pdf",
+      "trex": 4,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 0,
+        "hybrid": 0
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "us-024.pdf",
+      "trex": 2,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 0,
+      "camelot_counts": {
+        "lattice": 0,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    },
+    {
+      "file": "vertical_header.pdf",
+      "trex": 5,
+      "trex_error": null,
+      "camelot_max": 1,
+      "camelot_lattice": 1,
+      "camelot_counts": {
+        "lattice": 1,
+        "stream": 1,
+        "network": 1,
+        "hybrid": 1
+      },
+      "camelot_errors": {}
+    }
+  ]
+}

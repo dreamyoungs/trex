@@ -1,0 +1,33 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://github.com/dreamyoungs/trex/ml/schemas/hard_case.schema.json",
+  "title": "TREX Hard Case Queue Item",
+  "type": "object",
+  "required": [
+    "tenant_id",
+    "document_key",
+    "priority",
+    "attempts",
+    "reasons",
+    "last_seen_ms"
+  ],
+  "properties": {
+    "tenant_id": { "type": "string" },
+    "document_key": { "type": "string" },
+    "page": { "type": ["integer", "null"], "minimum": 1 },
+    "priority": { "type": "number", "minimum": 0.0 },
+    "attempts": { "type": "integer", "minimum": 1 },
+    "reasons": {
+      "type": "array",
+      "items": { "type": "string" },
+      "minItems": 1
+    },
+    "last_status": { "type": ["string", "null"] },
+    "last_error_code": { "type": ["string", "null"] },
+    "last_requested_mode": { "type": ["string", "null"] },
+    "last_seen_ms": { "type": "integer", "minimum": 0 },
+    "latest_table_count": { "type": ["integer", "null"], "minimum": 0 },
+    "latest_quality_score": { "type": ["number", "null"], "minimum": 0.0 },
+    "training_opt_in": { "type": "boolean" }
+  }
+}

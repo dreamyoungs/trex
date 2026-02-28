@@ -24,6 +24,11 @@ lopdf = "0.36"
 # CLI
 clap = { version = "4", features = ["derive"] }
 
+# HTTP server
+axum = { version = "0.7", features = ["multipart"] }
+tokio = { version = "1", features = ["macros", "rt-multi-thread", "signal"] }
+tempfile = "3"
+
 # 직렬화
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"

@@ -19,6 +19,8 @@ const COL_TOLERANCE_FLOOR: f64 = 4.0;
 const ROW_SPLIT_GAP_FACTOR: f64 = 3.5;
 const ROW_SPLIT_GAP_MIN: f64 = 32.0;
 const MIN_SPLIT_SECTION_ROWS: usize = 4;
+const MIN_SPLIT_SECTION_NON_EMPTY_CELLS: usize = 6;
+const MAX_SPLIT_TABLES: usize = 3;
 
 #[derive(Debug)]
 struct RowGroup<'a> {
@@ -195,32 +197,65 @@ fn build_table(rows: &[RowGroup<'_>], page: u32, table_index: usize) -> Option<T
     })
 }
 
-fn candidate_split_index(rows: &[RowGroup<'_>]) -> Option<usize> {
+fn split_row_sections(rows: &[RowGroup<'_>]) -> Vec<(usize, usize)> {
     if rows.len() < MIN_SPLIT_SECTION_ROWS * 2 {
-        return None;
+        return vec![(0, rows.len())];
     }
 
-    let gaps: Vec<f64> = rows
+    let gaps: Vec<(usize, f64)> = rows
         .windows(2)
-        .map(|pair| pair[0].anchor_y - pair[1].anchor_y)
-        .filter(|gap| *gap > 0.0)
+        .enumerate()
+        .map(|(idx, pair)| (idx, pair[0].anchor_y - pair[1].anchor_y))
+        .filter(|(_, gap)| *gap > 0.0)
         .collect();
 
     if gaps.is_empty() {
-        return None;
+        return vec![(0, rows.len())];
     }
 
-    let threshold = (median(gaps.clone()) * ROW_SPLIT_GAP_FACTOR).max(ROW_SPLIT_GAP_MIN);
+    let threshold = (median(gaps.iter().map(|(_, gap)| *gap).collect()) * ROW_SPLIT_GAP_FACTOR)
+        .max(ROW_SPLIT_GAP_MIN);
 
-    gaps.iter()
-        .enumerate()
-        .filter(|(idx, gap)| {
-            **gap > threshold
-                && (*idx + 1) >= MIN_SPLIT_SECTION_ROWS
-                && (rows.len() - (*idx + 1)) >= MIN_SPLIT_SECTION_ROWS
-        })
-        .max_by(|(_, left_gap), (_, right_gap)| left_gap.total_cmp(right_gap))
-        .map(|(idx, _)| idx + 1)
+    let mut cut_points: Vec<usize> = gaps
+        .into_iter()
+        .filter_map(
+            |(idx, gap)| {
+                if gap > threshold { Some(idx + 1) } else { None }
+            },
+        )
+        .collect();
+
+    if cut_points.is_empty() {
+        return vec![(0, rows.len())];
+    }
+
+    cut_points.sort_unstable();
+
+    let mut sections = Vec::new();
+    let mut start = 0usize;
+
+    for cut in cut_points {
+        if cut <= start {
+            continue;
+        }
+
+        if cut - start >= MIN_SPLIT_SECTION_ROWS {
+            sections.push((start, cut));
+            start = cut;
+        }
+    }
+
+    if rows.len() - start >= MIN_SPLIT_SECTION_ROWS {
+        sections.push((start, rows.len()));
+    } else if let Some(last) = sections.last_mut() {
+        last.1 = rows.len();
+    }
+
+    if sections.is_empty() {
+        vec![(0, rows.len())]
+    } else {
+        sections
+    }
 }
 
 /// 좌표 기반으로 테이블을 추론한다.
@@ -279,18 +314,33 @@ pub fn detect(text_boxes: &[TextBox], page: u32) -> Result<Vec<Table>, TrexError
         return Ok(Vec::new());
     }
 
-    if let Some(split) = candidate_split_index(&rows) {
-        let top = build_table(&rows[..split], page, 0);
-        let bottom = build_table(&rows[split..], page, 1);
+    let full_table = build_table(&rows, page, 0);
+    let full_score = full_table.as_ref().map(table_non_empty_cells).unwrap_or(0);
 
-        if let (Some(top), Some(bottom)) = (top, bottom) {
-            if table_non_empty_cells(&top) >= 8 && table_non_empty_cells(&bottom) >= 8 {
-                return Ok(vec![top, bottom]);
+    let sections = split_row_sections(&rows);
+    if sections.len() > 1 {
+        let mut split_tables = Vec::new();
+
+        for (start, end) in sections {
+            if let Some(table) = build_table(&rows[start..end], page, split_tables.len()) {
+                split_tables.push(table);
+            }
+        }
+
+        if split_tables.len() >= 2 && split_tables.len() <= MAX_SPLIT_TABLES {
+            let split_score: usize = split_tables.iter().map(table_non_empty_cells).sum();
+            let quality_ok = split_tables
+                .iter()
+                .all(|table| table_non_empty_cells(table) >= MIN_SPLIT_SECTION_NON_EMPTY_CELLS);
+
+            if quality_ok && (full_score == 0 || split_score >= full_score.saturating_mul(85) / 100)
+            {
+                return Ok(split_tables);
             }
         }
     }
 
-    match build_table(&rows, page, 0) {
+    match full_table {
         Some(table) => Ok(vec![table]),
         None => Ok(Vec::new()),
     }

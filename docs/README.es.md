@@ -133,9 +133,6 @@ Dicho post-procesamiento debe ser manejado por la capa de aplicación que consum
 
 ## Hoja de Ruta
 
-- [ ] Modo Lattice (extracción basada en cuadrícula)
-- [ ] Modo Stream (inferencia basada en coordenadas)
-- [ ] Interfaz CLI
 - [ ] Servidor Docker REST API
 - [ ] Bindings Python con PyO3
 - [ ] Bindings Node.js con NAPI-RS

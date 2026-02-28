@@ -4,30 +4,30 @@
 #[derive(Debug, thiserror::Error)]
 pub enum TrexError {
     /// PDF 파일을 읽거나 파싱하는 중 발생한 에러
-    #[error("PDF 파싱 에러: {0}")]
+    #[error("{0}")]
     PdfParse(String),
 
     /// 테이블 탐지 중 발생한 에러
-    #[error("테이블 탐지 에러: {0}")]
+    #[error("{0}")]
     Detection(String),
 
     /// 셀 병합 중 발생한 에러
-    #[error("셀 병합 에러: {0}")]
+    #[error("{0}")]
     Merge(String),
 
     /// 출력 변환 중 발생한 에러
-    #[error("출력 변환 에러: {0}")]
+    #[error("{0}")]
     Output(String),
 
     /// DL 추론 파이프라인 에러
-    #[error("DL 에러: {0}")]
+    #[error("{0}")]
     Dl(String),
 
     /// 파일 I/O 에러
-    #[error("파일 I/O 에러: {0}")]
+    #[error("{0}")]
     Io(#[from] std::io::Error),
 
     /// JSON 직렬화/역직렬화 에러
-    #[error("JSON 에러: {0}")]
+    #[error("{0}")]
     Json(#[from] serde_json::Error),
 }

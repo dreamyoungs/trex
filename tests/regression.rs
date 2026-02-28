@@ -31,7 +31,8 @@ fn password_protected_pdf_should_return_not_supported_error() {
     match error {
         TrexError::PdfParse(message) => {
             assert!(
-                message.contains("암호화된 PDF는 현재 지원하지 않습니다"),
+                message.contains("암호화된 PDF는 현재 지원하지 않습니다")
+                    || message.contains("Encrypted PDFs are not supported yet"),
                 "unexpected encrypted PDF error: {}",
                 message
             );

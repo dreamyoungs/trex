@@ -5,9 +5,9 @@
 //! - `dl` feature + ONNX 모델 경로가 있으면 모델 추론 사용
 //! - 그 외에는 내장 휴리스틱 라우터 사용
 
+use super::{merge_detected_tables, table_quality_score};
 use crate::pdf::text::{Line, LineDirection};
-use crate::{error::TrexError, DlFallbackMode, RuntimeOptions, Table, TextBox};
-use std::collections::HashSet;
+use crate::{DlFallbackMode, RuntimeOptions, Table, TextBox, error::TrexError, i18n};
 
 #[derive(Debug, Clone, Copy)]
 enum DlStrategy {
@@ -276,7 +276,11 @@ fn infer_decision(
     {
         if runtime.dl.model_path.is_some() {
             return Err(TrexError::Dl(
-                "DL 모델을 사용하려면 `--features dl`로 빌드해야 합니다".to_string(),
+                i18n::text(
+                    "DL 모델을 사용하려면 `--features dl`로 빌드해야 합니다",
+                    "Build with `--features dl` to use a DL model",
+                )
+                .to_string(),
             ));
         }
     }
@@ -294,38 +298,93 @@ fn infer_with_onnx(
 
     let input_vector = features.input_vector();
     let input = tract_ndarray::Array2::<f32>::from_shape_vec((1, input_vector.len()), input_vector)
-        .map_err(|e| TrexError::Dl(format!("DL 입력 텐서 생성 실패: {}", e)))?;
+        .map_err(|e| {
+            TrexError::Dl(format!(
+                "{}: {}",
+                i18n::text("DL 입력 텐서 생성 실패", "Failed to build DL input tensor"),
+                e
+            ))
+        })?;
 
     let model = tract_onnx::onnx()
         .model_for_path(model_path)
-        .map_err(|e| TrexError::Dl(format!("ONNX 모델 로딩 실패: {}", e)))?
+        .map_err(|e| {
+            TrexError::Dl(format!(
+                "{}: {}",
+                i18n::text("ONNX 모델 로딩 실패", "Failed to load ONNX model"),
+                e
+            ))
+        })?
         .with_input_fact(
             0,
             InferenceFact::dt_shape(f32::datum_type(), tvec!(1, input.ncols() as i64)),
         )
-        .map_err(|e| TrexError::Dl(format!("ONNX 입력 shape 설정 실패: {}", e)))?
+        .map_err(|e| {
+            TrexError::Dl(format!(
+                "{}: {}",
+                i18n::text(
+                    "ONNX 입력 shape 설정 실패",
+                    "Failed to configure ONNX input shape"
+                ),
+                e
+            ))
+        })?
         .into_optimized()
-        .map_err(|e| TrexError::Dl(format!("ONNX 최적화 실패: {}", e)))?
+        .map_err(|e| {
+            TrexError::Dl(format!(
+                "{}: {}",
+                i18n::text("ONNX 최적화 실패", "ONNX optimization failed"),
+                e
+            ))
+        })?
         .into_runnable()
-        .map_err(|e| TrexError::Dl(format!("ONNX 런너 생성 실패: {}", e)))?;
+        .map_err(|e| {
+            TrexError::Dl(format!(
+                "{}: {}",
+                i18n::text("ONNX 런너 생성 실패", "Failed to create ONNX runner"),
+                e
+            ))
+        })?;
 
-    let outputs = model
-        .run(tvec!(input.into_tensor().into()))
-        .map_err(|e| TrexError::Dl(format!("ONNX 추론 실패: {}", e)))?;
+    let outputs = model.run(tvec!(input.into_tensor().into())).map_err(|e| {
+        TrexError::Dl(format!(
+            "{}: {}",
+            i18n::text("ONNX 추론 실패", "ONNX inference failed"),
+            e
+        ))
+    })?;
 
-    let first = outputs
-        .first()
-        .ok_or_else(|| TrexError::Dl("ONNX 출력 텐서가 비어 있습니다".to_string()))?;
-    let view = first
-        .to_array_view::<f32>()
-        .map_err(|e| TrexError::Dl(format!("ONNX 출력 해석 실패: {}", e)))?;
+    let first = outputs.first().ok_or_else(|| {
+        TrexError::Dl(
+            i18n::text(
+                "ONNX 출력 텐서가 비어 있습니다",
+                "ONNX output tensor is empty",
+            )
+            .to_string(),
+        )
+    })?;
+    let view = first.to_array_view::<f32>().map_err(|e| {
+        TrexError::Dl(format!(
+            "{}: {}",
+            i18n::text("ONNX 출력 해석 실패", "Failed to decode ONNX output"),
+            e
+        ))
+    })?;
 
     let values: Vec<f32> = view.iter().copied().collect();
     if values.len() < 3 {
-        return Err(TrexError::Dl(format!(
-            "ONNX 출력 차원이 부족합니다. expected>=3, actual={}",
-            values.len()
-        )));
+        let detail = if i18n::is_korean() {
+            format!(
+                "ONNX 출력 차원이 부족합니다. expected>=3, actual={}",
+                values.len()
+            )
+        } else {
+            format!(
+                "ONNX output dimension is too small. expected>=3, actual={}",
+                values.len()
+            )
+        };
+        return Err(TrexError::Dl(detail));
     }
 
     Ok([values[0], values[1], values[2]])
@@ -344,65 +403,6 @@ fn fallback_detect(
     }
 }
 
-fn table_non_empty_cells(table: &Table) -> usize {
-    table
-        .headers
-        .iter()
-        .chain(table.rows.iter().flat_map(|row| row.iter()))
-        .filter(|cell| !cell.trim().is_empty())
-        .count()
-}
-
-fn table_tokens(table: &Table) -> HashSet<String> {
-    table
-        .headers
-        .iter()
-        .chain(table.rows.iter().flat_map(|row| row.iter()))
-        .map(|cell| cell.trim().to_lowercase())
-        .filter(|cell| !cell.is_empty())
-        .collect()
-}
-
-fn jaccard(a: &HashSet<String>, b: &HashSet<String>) -> f32 {
-    if a.is_empty() && b.is_empty() {
-        return 1.0;
-    }
-    let intersection = a.intersection(b).count() as f32;
-    let union = a.union(b).count() as f32;
-    if union <= 0.0 {
-        0.0
-    } else {
-        intersection / union
-    }
-}
-
-fn similar_table(left: &Table, right: &Table) -> bool {
-    let left_rows = left.rows.len() + 1;
-    let right_rows = right.rows.len() + 1;
-    let left_cols = left.headers.len();
-    let right_cols = right.headers.len();
-
-    let shape_close = left_rows.abs_diff(right_rows) <= 1 && left_cols.abs_diff(right_cols) <= 1;
-
-    let left_tokens = table_tokens(left);
-    let right_tokens = table_tokens(right);
-    let token_similarity = jaccard(&left_tokens, &right_tokens);
-
-    token_similarity >= 0.85 || (shape_close && token_similarity >= 0.55)
-}
-
-fn merge_tables(mut primary: Vec<Table>, secondary: Vec<Table>) -> Vec<Table> {
-    for candidate in secondary {
-        let is_dup = primary
-            .iter()
-            .any(|existing| similar_table(existing, &candidate));
-        if !is_dup {
-            primary.push(candidate);
-        }
-    }
-    primary
-}
-
 fn blend_detect(
     text_boxes: &[TextBox],
     lines: &[Line],
@@ -418,13 +418,13 @@ fn blend_detect(
         return Ok(lattice);
     }
 
-    let lattice_score: usize = lattice.iter().map(table_non_empty_cells).sum();
-    let stream_score: usize = stream.iter().map(table_non_empty_cells).sum();
+    let lattice_score: f32 = lattice.iter().map(table_quality_score).sum();
+    let stream_score: f32 = stream.iter().map(table_quality_score).sum();
 
     if lattice_score >= stream_score {
-        Ok(merge_tables(lattice, stream))
+        Ok(merge_detected_tables(lattice, stream))
     } else {
-        Ok(merge_tables(stream, lattice))
+        Ok(merge_detected_tables(stream, lattice))
     }
 }
 
