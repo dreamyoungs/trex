@@ -14,3 +14,17 @@ Thumbs.db
 
 # Test fixtures
 /tests/fixtures/*.pdf
+
+# Runtime logs / ML artifacts
+/logs/
+/ml/artifacts/
+*.ndjson
+
+# Node
+npm/**/node_modules/
+npm/trex/bin/trex
+npm/trex/bin/trex.exe
+bindings/node/node_modules/
+bindings/node/target/
+bindings/node/*.node
+bindings/node/Cargo.lock

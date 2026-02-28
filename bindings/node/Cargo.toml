@@ -1,0 +1,19 @@
+[package]
+name = "trex-node"
+version = "0.1.0"
+edition = "2024"
+description = "NAPI-RS Node.js bindings for TREX"
+license = "MIT OR Apache-2.0"
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+napi = { version = "2", default-features = false, features = ["napi8"] }
+napi-derive = "2"
+tempfile = "3"
+trex = { path = "../.." }
+
+[build-dependencies]
+napi-build = "2"

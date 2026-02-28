@@ -1,0 +1,37 @@
+{
+  "name": "@dreamyoungs/trex-node",
+  "version": "0.1.0",
+  "description": "NAPI-RS native Node.js bindings for TREX",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT OR Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dreamyoungs/trex.git",
+    "directory": "bindings/node"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "napi": {
+    "name": "trex_node",
+    "triples": {
+      "defaults": true
+    }
+  },
+  "scripts": {
+    "build": "napi build --platform --release",
+    "build:debug": "napi build --platform",
+    "test:smoke": "node smoke-test.js",
+    "test": "npm run build:debug && npm run test:smoke",
+    "prepublishOnly": "npm run build"
+  },
+  "devDependencies": {
+    "@napi-rs/cli": "^2.18.4"
+  },
+  "files": [
+    "index.js",
+    "index.d.ts",
+    "*.node"
+  ]
+}
