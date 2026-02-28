@@ -1,12 +1,13 @@
 //! 테이블 탐지 모듈
 //!
-//! Lattice(격자선 기반)와 Stream(좌표 기반) 두 가지 모드를 제공한다.
+//! Lattice/Stream 탐지기와 DL 라우터를 제공한다.
 
+pub mod dl;
 pub mod lattice;
 pub mod stream;
 
-use crate::{TextBox, Table, error::TrexError};
 use crate::pdf::text::Line;
+use crate::{Table, TextBox, error::TrexError};
 
 /// 테이블 탐지 결과
 #[derive(Debug)]

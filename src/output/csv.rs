@@ -20,13 +20,16 @@ pub fn to_string(tables: &[Table]) -> Result<String, TrexError> {
         // 데이터 행
         for row in &table.rows {
             // CSV 이스케이프: 쉼표나 따옴표가 포함된 값 처리
-            let escaped: Vec<String> = row.iter().map(|cell| {
-                if cell.contains(',') || cell.contains('"') || cell.contains('\n') {
-                    format!("\"{}\"", cell.replace('"', "\"\""))
-                } else {
-                    cell.clone()
-                }
-            }).collect();
+            let escaped: Vec<String> = row
+                .iter()
+                .map(|cell| {
+                    if cell.contains(',') || cell.contains('"') || cell.contains('\n') {
+                        format!("\"{}\"", cell.replace('"', "\"\""))
+                    } else {
+                        cell.clone()
+                    }
+                })
+                .collect();
             output.push_str(&escaped.join(","));
             output.push('\n');
         }

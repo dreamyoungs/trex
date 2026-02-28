@@ -31,12 +31,15 @@ serde_json = "1"
 # 에러 처리
 thiserror = "2"
 
+# DL (optional)
+tract-onnx = { version = "0.21", optional = true }
+
 [dev-dependencies]
 criterion = "0.5"
 
 [features]
 default = []
-dl = []  # DL 모드 활성화 시 ONNX 런타임 포함 (Phase 4)
+dl = ["dep:tract-onnx"]  # DL 모드 활성화 시 ONNX 추론 라우터 포함
 
 [[bench]]
 name = "extraction"

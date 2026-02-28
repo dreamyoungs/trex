@@ -1,6 +1,6 @@
 use clap::{Parser, Subcommand, ValueEnum};
 use std::path::PathBuf;
-use trex::{ExtractOptions, ParseMode};
+use trex::{DlFallbackMode, DlRuntimeOptions, ExtractOptions, ParseMode, RuntimeOptions};
 
 /// TREX — Table Rust EXtractor
 ///
@@ -34,6 +34,18 @@ enum Commands {
         /// 출력 파일 경로 (미지정 시 stdout)
         #[arg(short, long)]
         output: Option<PathBuf>,
+
+        /// DL 라우터 ONNX 모델 경로 (`--mode dl`에서 사용)
+        #[arg(long)]
+        dl_model: Option<PathBuf>,
+
+        /// DL 라우터 최소 신뢰도 (0.0 ~ 1.0)
+        #[arg(long, default_value_t = 0.55)]
+        dl_min_confidence: f32,
+
+        /// DL 저신뢰/모델 미사용 시 폴백 모드
+        #[arg(long, value_enum, default_value = "auto")]
+        dl_fallback: CliDlFallbackMode,
     },
 }
 
@@ -44,8 +56,18 @@ enum CliParseMode {
     Lattice,
     /// 좌표 기반 추론
     Stream,
+    /// DL 라우터 기반 탐지
+    Dl,
     /// 자동 선택
     Auto,
+}
+
+/// CLI용 DL 폴백 모드
+#[derive(Clone, Copy, ValueEnum)]
+enum CliDlFallbackMode {
+    Auto,
+    Lattice,
+    Stream,
 }
 
 /// 출력 형식
@@ -66,14 +88,20 @@ fn parse_pages(pages_str: &str) -> Result<Vec<u32>, String> {
             if range.len() != 2 {
                 return Err(format!("잘못된 페이지 범위: {}", part));
             }
-            let start: u32 = range[0].parse().map_err(|_| format!("잘못된 페이지 번호: {}", range[0]))?;
-            let end: u32 = range[1].parse().map_err(|_| format!("잘못된 페이지 번호: {}", range[1]))?;
+            let start: u32 = range[0]
+                .parse()
+                .map_err(|_| format!("잘못된 페이지 번호: {}", range[0]))?;
+            let end: u32 = range[1]
+                .parse()
+                .map_err(|_| format!("잘못된 페이지 번호: {}", range[1]))?;
             for p in start..=end {
                 result.push(p);
             }
         } else {
             // 단일 페이지
-            let p: u32 = part.parse().map_err(|_| format!("잘못된 페이지 번호: {}", part))?;
+            let p: u32 = part
+                .parse()
+                .map_err(|_| format!("잘못된 페이지 번호: {}", part))?;
             result.push(p);
         }
     }
@@ -90,12 +118,22 @@ fn main() {
             mode,
             format,
             output,
+            dl_model,
+            dl_min_confidence,
+            dl_fallback,
         } => {
             // 파싱 모드 변환
             let parse_mode = match mode {
                 CliParseMode::Lattice => ParseMode::Lattice,
                 CliParseMode::Stream => ParseMode::Stream,
+                CliParseMode::Dl => ParseMode::Dl,
                 CliParseMode::Auto => ParseMode::Auto,
+            };
+
+            let fallback_mode = match dl_fallback {
+                CliDlFallbackMode::Auto => DlFallbackMode::Auto,
+                CliDlFallbackMode::Lattice => DlFallbackMode::Lattice,
+                CliDlFallbackMode::Stream => DlFallbackMode::Stream,
             };
 
             // 페이지 옵션 파싱
@@ -111,23 +149,27 @@ fn main() {
                 mode: parse_mode,
             };
 
+            let runtime = RuntimeOptions {
+                dl: DlRuntimeOptions {
+                    model_path: dl_model,
+                    min_confidence: dl_min_confidence,
+                    fallback_mode,
+                },
+            };
+
             // 추출 실행
-            match trex::extract(&pdf_path, &options) {
+            match trex::extract_with_runtime_options(&pdf_path, &options, &runtime) {
                 Ok(tables) => {
                     // 출력 생성
                     let output_str = match format {
-                        OutputFormat::Json => {
-                            trex::output::to_json(&tables).unwrap_or_else(|e| {
-                                eprintln!("JSON 변환 오류: {}", e);
-                                std::process::exit(1);
-                            })
-                        }
-                        OutputFormat::Csv => {
-                            trex::output::to_csv(&tables).unwrap_or_else(|e| {
-                                eprintln!("CSV 변환 오류: {}", e);
-                                std::process::exit(1);
-                            })
-                        }
+                        OutputFormat::Json => trex::output::to_json(&tables).unwrap_or_else(|e| {
+                            eprintln!("JSON 변환 오류: {}", e);
+                            std::process::exit(1);
+                        }),
+                        OutputFormat::Csv => trex::output::to_csv(&tables).unwrap_or_else(|e| {
+                            eprintln!("CSV 변환 오류: {}", e);
+                            std::process::exit(1);
+                        }),
                     };
 
                     // 출력 대상 결정 (파일 또는 stdout)

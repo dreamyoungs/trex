@@ -19,6 +19,10 @@ pub enum TrexError {
     #[error("출력 변환 에러: {0}")]
     Output(String),
 
+    /// DL 추론 파이프라인 에러
+    #[error("DL 에러: {0}")]
+    Dl(String),
+
     /// 파일 I/O 에러
     #[error("파일 I/O 에러: {0}")]
     Io(#[from] std::io::Error),

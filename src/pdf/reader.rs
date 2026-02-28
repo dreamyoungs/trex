@@ -21,6 +21,12 @@ impl PdfDocument {
         let doc = lopdf::Document::load(path)
             .map_err(|e| TrexError::PdfParse(format!("PDF 로딩 실패: {}", e)))?;
 
+        if doc.is_encrypted() {
+            return Err(TrexError::PdfParse(
+                "암호화된 PDF는 현재 지원하지 않습니다".to_string(),
+            ));
+        }
+
         Ok(Self { inner: doc })
     }
 
