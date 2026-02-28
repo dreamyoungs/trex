@@ -1,5 +1,164 @@
 # TREX
 
+🌍 [日本語](docs/README.ja.md) | [Español](docs/README.es.md)
+
+**Table Rust EXtractor** — A lightweight Rust engine that extracts tables from PDFs.
+
+```bash
+trex extract invoice.pdf --format json
+```
+
+```json
+[
+    {
+        "page": 1,
+        "table_index": 0,
+        "headers": ["Item", "Qty", "Unit Price", "Amount"],
+        "rows": [
+            ["A4 Paper", "10", "5,000", "50,000"],
+            ["Toner", "2", "35,000", "70,000"]
+        ]
+    }
+]
+```
+
+---
+
+## Why TREX?
+
+Existing PDF table extraction tools are concentrated in the Python ecosystem.
+They require heavy runtime dependencies like OpenCV, Ghostscript, Pandas, and Java, making large-scale processing difficult in serverless environments due to memory constraints.
+
+TREX is a lightweight alternative that runs as a single binary with no external dependencies.
+
+- **Zero external dependencies**: No need for native libraries like OpenCV or Ghostscript
+- **Low memory footprint**: Runs without OOM in serverless containers (Cloud Run, Lambda)
+- **Single binary deployment**: Minimizes container image size
+
+---
+
+## Parsing Engine
+
+TREX detects tables using two modes:
+
+**Lattice** — Handles tables with visible gridlines. Detects horizontal and vertical line segments using a lightweight CV algorithm and determines cell regions from intersections. Works without OpenCV.
+
+**Stream** — Handles tables without gridlines. Analyzes text box coordinates using clustering algorithms to infer columns and rows.
+
+**DL Router (optional)** — Uses a lightweight page-feature model to route each page to Lattice / Stream / Blend strategy. Build with `--features dl` and provide an ONNX model path.
+
+```mermaid
+graph LR
+    A[PDF] --> B{Lines present?}
+    B -->|Yes| C[Lattice]
+    B -->|No| D[Stream]
+    C --> E[Cell Merge]
+    D --> E
+    E --> F[JSON Output]
+```
+
+---
+
+## Usage
+
+### CLI
+
+```bash
+# Single file
+trex extract report.pdf
+
+# Specific pages only
+trex extract report.pdf --pages 3,5,7
+
+# Specify parsing mode
+trex extract report.pdf --mode lattice
+
+# DL router mode (optional)
+cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router.onnx
+
+# Output format
+trex extract report.pdf --format csv > output.csv
+```
+
+### Docker (REST API)
+
+```bash
+docker run -p 8080:8080 ghcr.io/dreamyoungs/trex
+
+curl -X POST http://localhost:8080/extract \
+  -F "file=@invoice.pdf" \
+  -H "Accept: application/json"
+```
+
+### Node.js
+
+```javascript
+const { extract } = require("@dreamyoungs/trex");
+
+const tables = await extract("invoice.pdf", { pages: [1, 2] });
+console.log(tables[0].rows);
+```
+
+### Python
+
+```python
+import trex
+
+tables = trex.extract("invoice.pdf", pages=[1, 2])
+print(tables[0].rows)
+```
+
+---
+
+## Design Principles
+
+TREX **does one thing**: converts the physical table layout on a page into a 2D array.
+
+Things it intentionally does NOT do:
+
+- LLM-based document analysis or contextual interpretation
+- Automatic merging of tables spanning multiple pages
+- Header normalization, data type inference, or other business logic
+
+Such post-processing should be handled by the application layer consuming TREX's output.
+
+---
+
+## Tech Stack
+
+| Area             | Choice                  | Note                  |
+| ---------------- | ----------------------- | --------------------- |
+| Language         | Rust                    |                       |
+| PDF Parser       | `lopdf` / `pdf-extract` | Low-level PDF access  |
+| HTTP Server      | Axum                    | For Docker REST API   |
+| Python Bindings  | PyO3 + maturin          | `pip install` support |
+| Node.js Bindings | NAPI-RS                 | `npm install` support |
+
+---
+
+## Roadmap
+
+- [ ] Lattice mode (gridline-based extraction)
+- [ ] Stream mode (coordinate-based inference)
+- [ ] CLI interface
+- [ ] Docker REST API server
+- [ ] PyO3 Python bindings
+- [ ] NAPI-RS Node.js bindings
+- [ ] WebAssembly build (in-browser)
+- [ ] Benchmark suite with real-world comparisons
+
+---
+
+## License
+
+MIT OR Apache-2.0
+
+---
+
+<br>
+
+# 🇰🇷 한국어
+
 **Table Rust EXtractor** — PDF에서 표(Table)만 추출하는 Rust 엔진.
 
 ```bash
@@ -43,6 +202,8 @@ TREX는 두 가지 모드로 표를 탐지합니다.
 
 **Stream** — 격자선이 없는 표를 처리합니다. 텍스트 박스의 좌표를 군집화(Clustering) 알고리즘으로 분석하여 열(Column)과 행(Row)을 추론합니다.
 
+**DL Router(선택)** — 페이지 피처 기반 모델로 Lattice / Stream / Blend 전략을 선택합니다. `--features dl`로 빌드하고 ONNX 모델 경로를 전달하면 사용할 수 있습니다.
+
 ```mermaid
 graph LR
     A[PDF] --> B{선 존재 여부}
@@ -68,6 +229,9 @@ trex extract report.pdf --pages 3,5,7
 
 # 파싱 모드 지정
 trex extract report.pdf --mode lattice
+
+# DL 라우터 모드 (선택)
+cargo run --features dl -- extract report.pdf --mode dl --dl-model models/router.onnx
 
 # 출력 형식
 trex extract report.pdf --format csv > output.csv
